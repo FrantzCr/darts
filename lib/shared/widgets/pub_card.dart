@@ -37,7 +37,7 @@ class PubCard extends StatelessWidget {
               padding: padding ?? const EdgeInsets.all(16),
               child: child,
             ),
-            if (hasTicks) IgnorePointer(child: _CornerTicks(color: theme.accent)),
+            if (hasTicks) Positioned.fill(child: IgnorePointer(child: _CornerTicks(color: theme.accent))),
           ],
         ),
       ),
@@ -56,9 +56,7 @@ class _CornerTicks extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: CustomPaint(painter: _TickPainter(color: color)),
-    );
+    return CustomPaint(painter: _TickPainter(color: color));
   }
 }
 

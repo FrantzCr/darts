@@ -23,8 +23,10 @@ class PubScreen extends StatelessWidget {
       floatingActionButtonLocation: fabLocation ?? FloatingActionButtonLocation.endFloat,
       body: Stack(
         children: [
-          if (theme.shape.texture == 'diagonal') IgnorePointer(child: _DiagonalTexture(color: theme.surfaceBorder)),
-          if (theme.shape.texture == 'grid') IgnorePointer(child: _GridTexture(color: theme.surfaceBorder)),
+          if (theme.shape.texture == 'diagonal')
+            Positioned.fill(child: IgnorePointer(child: _DiagonalTexture(color: theme.surfaceBorder))),
+          if (theme.shape.texture == 'grid')
+            Positioned.fill(child: IgnorePointer(child: _GridTexture(color: theme.surfaceBorder))),
           child,
         ],
       ),
@@ -38,9 +40,7 @@ class _DiagonalTexture extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: CustomPaint(painter: _DiagonalPainter(color: color)),
-    );
+    return CustomPaint(painter: _DiagonalPainter(color: color));
   }
 }
 
@@ -71,9 +71,7 @@ class _GridTexture extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: CustomPaint(painter: _GridPainter(color: color)),
-    );
+    return CustomPaint(painter: _GridPainter(color: color));
   }
 }
 
