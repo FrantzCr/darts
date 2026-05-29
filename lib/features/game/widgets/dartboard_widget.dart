@@ -266,24 +266,25 @@ class TappableDartboardWidget extends StatelessWidget {
     final p = (localPos - center) * scale;
     final r = p.distance;
 
-    if (r > BoardRadii.outer) return null;
-    // Area between the double ring and the outer rim is visually the miss zone
-    if (r > BoardRadii.doubleO) return null;
+    // Snap margin (viewBox units): narrow rings get this extra radius on each side.
+    // Triple and double rings are 10 units wide; +12 each side ≈ 3× larger hitbox.
+    const snap = 12.0;
 
-    // Bullseye
-    if (r <= BoardRadii.bull) {
+    if (r > BoardRadii.outer) return null;
+    // Beyond double ring + snap margin → miss
+    if (r > BoardRadii.doubleO + snap) return null;
+
+    // ── Bull zones (priority, checked before sector logic) ───────
+    if (r <= BoardRadii.bull + snap) {
       return DartThrow(id: 'bull-50', sector: 50, multiplier: DartMultiplier.double, value: 50, tapOffset: p);
     }
-    // Outer bull (25)
-    if (r <= BoardRadii.outerBull) {
+    if (r <= BoardRadii.outerBull + snap) {
       return DartThrow(id: 'bull-25', sector: 25, multiplier: DartMultiplier.single, value: 25, tapOffset: p);
     }
 
     // Determine sector by angle
     double angleDeg = atan2(p.dy, p.dx) * 180 / pi;
-    // Normalize to 0..360, with 0 at top (-90° offset)
     angleDeg = (angleDeg + 90 + 360) % 360;
-    // Each sector is 18° wide, sector 0 (value=20) is centered at 0°
     int sectorIdx = ((angleDeg + 9) ~/ 18) % 20;
     final val = kSectorOrder[sectorIdx];
 
@@ -291,18 +292,22 @@ class TappableDartboardWidget extends StatelessWidget {
     DartMultiplier mult;
     int value;
 
-    if (r >= BoardRadii.doubleI && r <= BoardRadii.doubleO) {
+    // ── Double ring (snapped inward and outward) ──────────────────
+    if (r >= BoardRadii.doubleI - snap && r <= BoardRadii.doubleO + snap) {
       ring = 'double';
       mult = DartMultiplier.double;
       value = val * 2;
-    } else if (r >= BoardRadii.tripleI && r <= BoardRadii.tripleO) {
+    // ── Triple ring (snapped inward and outward) ──────────────────
+    } else if (r >= BoardRadii.tripleI - snap && r <= BoardRadii.tripleO + snap) {
       ring = 'triple';
       mult = DartMultiplier.triple;
       value = val * 3;
-    } else if (r >= BoardRadii.tripleO && r <= BoardRadii.doubleI) {
+    // ── Single-out (remaining gap between triple+snap and double-snap) ──
+    } else if (r > BoardRadii.tripleO + snap) {
       ring = 'single-out';
       mult = DartMultiplier.single;
       value = val;
+    // ── Single-in (between outerBull+snap and tripleI-snap) ───────
     } else {
       ring = 'single-in';
       mult = DartMultiplier.single;
