@@ -14,7 +14,9 @@ class HistoryNotifier extends Notifier<List<GameSession>> {
   }
 
   Future<void> saveGame(ActiveGameState game) async {
-    final winner = game.players.where((p) => p.score == 0).firstOrNull;
+    final winner = game.isRtc
+        ? game.players.where((p) => p.score > 20).firstOrNull
+        : game.players.where((p) => p.score == 0).firstOrNull;
 
     final winnerTurns = winner == null
         ? <TurnRecord>[]
@@ -30,7 +32,7 @@ class HistoryNotifier extends Notifier<List<GameSession>> {
       rounds: game.round,
       durationSeconds: DateTime.now().difference(game.startedAt).inSeconds,
       turns: game.completedTurns,
-      startScore: 301,
+      startScore: game.isRtc ? 0 : game.startScore,
       winnerLastDart: winnerLastDart,
       winnerDartsThrown: winnerDartsThrown,
     );

@@ -9,6 +9,7 @@ import '../../../features/history/providers/history_provider.dart';
 import '../../../features/profile/providers/player_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/pub_avatar.dart';
+import '../../../shared/widgets/pub_back_button.dart';
 import '../../../shared/widgets/pub_screen.dart';
 import '../../../shared/widgets/theme_toggle_fab.dart';
 
@@ -80,10 +81,7 @@ class _TopBar extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: () => context.go('/'),
-            child: Icon(Icons.arrow_back_ios, color: t.textOnDark, size: 20),
-          ),
+          PubBackButton(t: t, onTap: () => context.go('/')),
           const SizedBox(width: 12),
           Text(l10n.history, style: TextStyle(color: t.textOnDark, fontSize: 20, fontWeight: FontWeight.w700, fontFamily: t.displayFont)),
         ],
@@ -103,26 +101,30 @@ class _PlayerFilter extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return SizedBox(
-      height: 48,
+      height: 36,
       child: ListView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
-          _FilterChip(
-            label: l10n.all,
-            isSelected: selectedId == null,
-            t: t,
-            onTap: () => onSelect(null),
+          Center(
+            child: _FilterChip(
+              label: l10n.all,
+              isSelected: selectedId == null,
+              t: t,
+              onTap: () => onSelect(null),
+            ),
           ),
           const SizedBox(width: 8),
           ...players.map((p) => Padding(
             padding: const EdgeInsets.only(right: 8),
-            child: _FilterChip(
-              label: p.name,
-              isSelected: selectedId == p.id,
-              t: t,
-              onTap: () => onSelect(p.id),
-              avatar: PubAvatar(initials: p.initials, color: p.color, theme: t, size: 20),
+            child: Center(
+              child: _FilterChip(
+                label: p.name,
+                isSelected: selectedId == p.id,
+                t: t,
+                onTap: () => onSelect(p.id),
+                avatar: PubAvatar(initials: p.initials, color: p.color, theme: t, size: 24),
+              ),
             ),
           )),
         ],
@@ -145,7 +147,7 @@ class _FilterChip extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
-        padding: EdgeInsets.symmetric(horizontal: avatar != null ? 10 : 14, vertical: 8),
+        padding: EdgeInsets.symmetric(horizontal: avatar != null ? 12 : 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected ? t.accent : Colors.transparent,
           borderRadius: BorderRadius.circular(999),
@@ -160,7 +162,7 @@ class _FilterChip extends StatelessWidget {
               style: TextStyle(
                 color: isSelected ? t.textOnDark : t.textOnDark.withValues(alpha: 0.7),
                 fontWeight: FontWeight.w600,
-                fontSize: 13,
+                fontSize: 16,
               ),
             ),
           ],
@@ -219,11 +221,30 @@ class _GameRow extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    sessionPlayers.map((p) => p!.name).join(' ${l10n.vs} '),
-                    style: TextStyle(color: t.textOnDark, fontSize: 14, fontWeight: FontWeight.w600),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          sessionPlayers.map((p) => p!.name).join(' ${l10n.vs} '),
+                          style: TextStyle(color: t.textOnDark, fontSize: 14, fontWeight: FontWeight.w600),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: t.surface.withValues(alpha: 0.25),
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: t.surfaceBorder.withValues(alpha: 0.6)),
+                        ),
+                        child: Text(
+                          _modeLabel(session.startScore),
+                          style: TextStyle(color: t.textOnDark.withValues(alpha: 0.75), fontSize: 10, fontWeight: FontWeight.w700, fontFamily: t.monoFont),
+                        ),
+                      ),
+                    ],
                   ),
                   Text(date, style: TextStyle(color: t.textOnDark.withValues(alpha: 0.5), fontSize: 11)),
                 ],
@@ -242,6 +263,12 @@ class _GameRow extends StatelessWidget {
       ),
     );
   }
+
+  String _modeLabel(int startScore) => switch (startScore) {
+    0   => 'Clock',
+    501 => '501',
+    _   => '301',
+  };
 
   String _formatDate(DateTime dt, AppLocalizations l10n) {
     final now = DateTime.now();

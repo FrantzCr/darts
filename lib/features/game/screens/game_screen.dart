@@ -9,6 +9,7 @@ import '../../../core/themes/theme_provider.dart';
 import '../../../core/themes/theme_tokens.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/pub_avatar.dart';
+import '../../../shared/widgets/pub_back_button.dart';
 import '../../../shared/widgets/pub_button.dart';
 import '../../../shared/widgets/pub_screen.dart';
 import '../../../shared/widgets/theme_toggle_fab.dart';
@@ -78,7 +79,7 @@ class _PortraitLayout extends ConsumerWidget {
             ),
           ),
         ),
-        _CheckoutHint(game: game, t: t),
+        if (game.isRtc) _RtcTargetHint(game: game, t: t) else _CheckoutHint(game: game, t: t),
         _TurnRow(game: game, t: t),
         const SizedBox(height: 8),
         _ActionButtons(game: game, t: t),
@@ -119,7 +120,7 @@ class _LandscapeLayout extends ConsumerWidget {
               const SizedBox(height: 8),
               _ScoreBanner(game: game, t: t),
               const Spacer(),
-              _CheckoutHint(game: game, t: t),
+              if (game.isRtc) _RtcTargetHint(game: game, t: t) else _CheckoutHint(game: game, t: t),
               _TurnRow(game: game, t: t),
               const SizedBox(height: 8),
               _ActionButtons(game: game, t: t),
@@ -190,13 +191,10 @@ class _TopBar extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: () => context.go('/'),
-            child: Icon(Icons.arrow_back_ios, color: t.textOnDark, size: 20),
-          ),
+          PubBackButton(t: t, onTap: () => context.go('/')),
           const SizedBox(width: 12),
           Text(
-            l10n.roundLabel(game.round),
+            '${game.isRtc ? 'Clock' : game.startScore} · ${l10n.roundLabel(game.round)}',
             style: TextStyle(
               color: t.textOnDark,
               fontSize: 14,
@@ -259,7 +257,7 @@ class _ScoreBanner extends StatelessWidget {
         itemBuilder: (_, i) {
           final p = game.players[i];
           final isActive = i == game.activeIndex;
-          return _PlayerScoreCard(player: p, isActive: isActive, t: t);
+          return _PlayerScoreCard(player: p, isActive: isActive, t: t, isRtc: game.isRtc);
         },
       ),
     );
@@ -270,7 +268,8 @@ class _PlayerScoreCard extends StatelessWidget {
   final ActivePlayer player;
   final bool isActive;
   final AppThemeTokens t;
-  const _PlayerScoreCard({required this.player, required this.isActive, required this.t});
+  final bool isRtc;
+  const _PlayerScoreCard({required this.player, required this.isActive, required this.t, this.isRtc = false});
 
   @override
   Widget build(BuildContext context) {
@@ -303,16 +302,31 @@ class _PlayerScoreCard extends StatelessWidget {
                 player.player.name,
                 style: TextStyle(color: t.textDim, fontSize: 11),
               ),
-              Text(
-                '${player.score}',
-                style: TextStyle(
-                  color: t.text,
-                  fontSize: 28,
-                  fontWeight: FontWeight.w800,
-                  fontFamily: t.scoreboardFont,
-                  height: 1.1,
-                ),
-              ),
+              isRtc
+                  ? RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: '${player.score > 20 ? 20 : player.score - 1}',
+                            style: TextStyle(color: t.text, fontSize: 28, fontWeight: FontWeight.w800, fontFamily: t.scoreboardFont, height: 1.1),
+                          ),
+                          TextSpan(
+                            text: '/20',
+                            style: TextStyle(color: t.textDim, fontSize: 14, fontFamily: t.monoFont, height: 1.1),
+                          ),
+                        ],
+                      ),
+                    )
+                  : Text(
+                      '${player.score}',
+                      style: TextStyle(
+                        color: t.text,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                        fontFamily: t.scoreboardFont,
+                        height: 1.1,
+                      ),
+                    ),
             ],
           ),
         ],
@@ -337,7 +351,7 @@ class _TurnRow extends StatelessWidget {
           return Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: _DartSlot(dart: dart, index: i, t: t, isBust: game.status == GameStatus.bust),
+              child: _DartSlot(dart: dart, index: i, t: t, isBust: game.status == GameStatus.bust, isRtc: game.isRtc),
             ),
           );
         }),
@@ -351,14 +365,43 @@ class _DartSlot extends StatelessWidget {
   final int index;
   final AppThemeTokens t;
   final bool isBust;
-  const _DartSlot({required this.dart, required this.index, required this.t, required this.isBust});
+  final bool isRtc;
+  const _DartSlot({required this.dart, required this.index, required this.t, required this.isBust, this.isRtc = false});
 
   @override
   Widget build(BuildContext context) {
     final hasValue = dart != null;
-    final label = dart?.label ?? '—';
     final isMiss = dart?.multiplier == DartMultiplier.miss;
 
+    if (isRtc) {
+      final hit = dart?.rtcHit ?? false;
+      Color bg = hasValue
+          ? (hit ? t.green.withValues(alpha: 0.2) : t.surfaceAlt)
+          : t.surface.withValues(alpha: 0.3);
+      Color border = hasValue
+          ? (hit ? t.green : t.surfaceBorder)
+          : t.surfaceBorder.withValues(alpha: 0.4);
+      return Container(
+        height: 56,
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(t.shape.smRadius),
+          border: Border.all(color: border, width: 1),
+        ),
+        child: Center(
+          child: hasValue
+              ? hit
+                  ? Icon(Icons.check_rounded, color: t.green, size: 24)
+                  : Text(
+                      isMiss ? 'M' : '${dart!.sector}',
+                      style: TextStyle(color: t.textDim, fontSize: 18, fontWeight: FontWeight.w700, fontFamily: t.monoFont),
+                    )
+              : Text('—', style: TextStyle(color: t.textDim, fontSize: 18, fontFamily: t.monoFont)),
+        ),
+      );
+    }
+
+    final label = dart?.label ?? '—';
     return Container(
       height: 56,
       decoration: BoxDecoration(
@@ -396,6 +439,53 @@ class _DartSlot extends StatelessWidget {
   }
 }
 
+class _RtcTargetHint extends StatelessWidget {
+  final ActiveGameState game;
+  final AppThemeTokens t;
+  const _RtcTargetHint({required this.game, required this.t});
+
+  @override
+  Widget build(BuildContext context) {
+    if (game.status == GameStatus.win) return const SizedBox(height: 4);
+    final target = game.rtcTarget.clamp(1, 20);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 6, 16, 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(Icons.my_location_rounded, color: t.accent, size: 16),
+          const SizedBox(width: 8),
+          Text(
+            'Viser ',
+            style: TextStyle(color: t.textDim, fontSize: 14),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            decoration: BoxDecoration(
+              color: t.accent,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              '$target',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.w900,
+                fontFamily: t.monoFont,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            '/ 20',
+            style: TextStyle(color: t.textDim, fontSize: 14, fontFamily: t.monoFont),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _CheckoutHint extends StatelessWidget {
   final ActiveGameState game;
   final AppThemeTokens t;
@@ -416,21 +506,21 @@ class _CheckoutHint extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
-            Icon(Icons.flag, color: t.gold, size: 15),
-            const SizedBox(width: 5),
+            Icon(Icons.flag, color: t.gold, size: 17),
+            const SizedBox(width: 6),
             Text(
               '$projected pts',
-              style: TextStyle(color: t.gold, fontSize: 13, fontWeight: FontWeight.w700, fontFamily: t.monoFont),
+              style: TextStyle(color: t.gold, fontSize: 15, fontWeight: FontWeight.w700, fontFamily: t.monoFont),
             ),
           ]),
-          const SizedBox(height: 7),
+          const SizedBox(height: 9),
           if (routes.isEmpty)
             Row(children: [
-              Icon(Icons.do_not_disturb_alt, color: t.textDim, size: 14),
-              const SizedBox(width: 6),
+              Icon(Icons.do_not_disturb_alt, color: t.textDim, size: 16),
+              const SizedBox(width: 7),
               Text(
                 'Pas de sortie en $dartsLeft ${dartsLeft > 1 ? 'fléchettes' : 'fléchette'}',
-                style: TextStyle(color: t.textDim, fontSize: 13, fontStyle: FontStyle.italic),
+                style: TextStyle(color: t.textDim, fontSize: 15, fontStyle: FontStyle.italic),
               ),
             ])
           else
@@ -439,18 +529,18 @@ class _CheckoutHint extends StatelessWidget {
               children: [
                 for (int i = 0; i < routes.length; i++) ...[
                   if (i > 0) ...[
-                    const SizedBox(width: 10),
-                    Text('ou', style: TextStyle(color: t.textDim, fontSize: 12)),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 12),
+                    Text('ou', style: TextStyle(color: t.textDim, fontSize: 14)),
+                    const SizedBox(width: 12),
                   ],
                   Wrap(
-                    spacing: 5,
+                    spacing: 7,
                     children: routes[i].map((step) {
                       final info = formatStep(step);
                       return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
-                        decoration: BoxDecoration(color: _chipColor(info.kind, t), borderRadius: BorderRadius.circular(6)),
-                        child: Text(info.label, style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700, fontFamily: t.monoFont)),
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        decoration: BoxDecoration(color: _chipColor(info.kind, t), borderRadius: BorderRadius.circular(8)),
+                        child: Text(info.label, style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w700, fontFamily: t.monoFont)),
                       );
                     }).toList(),
                   ),

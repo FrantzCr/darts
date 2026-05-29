@@ -10,6 +10,7 @@ import '../../../features/history/providers/history_provider.dart';
 import '../../../features/profile/providers/player_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/pub_avatar.dart';
+import '../../../shared/widgets/pub_back_button.dart';
 import '../../../shared/widgets/pub_card.dart';
 import '../../../shared/widgets/pub_screen.dart';
 import '../../../shared/widgets/theme_toggle_fab.dart';
@@ -92,10 +93,7 @@ class _TopBar extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: () => context.go('/'),
-            child: Icon(Icons.arrow_back_ios, color: t.textOnDark, size: 20),
-          ),
+          PubBackButton(t: t, onTap: () => context.go('/')),
           const SizedBox(width: 12),
           Text(l10n.stats, style: TextStyle(color: t.textOnDark, fontSize: 20, fontWeight: FontWeight.w700, fontFamily: t.displayFont)),
         ],
@@ -114,7 +112,7 @@ class _PlayerSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 56,
+      height: 40,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -123,22 +121,25 @@ class _PlayerSelector extends StatelessWidget {
         itemBuilder: (_, i) {
           final p = players[i];
           final isSelected = p.id == selected.id;
-          return GestureDetector(
-            onTap: () => onSelect(p),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 150),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              decoration: BoxDecoration(
-                color: isSelected ? t.accent : Colors.transparent,
-                borderRadius: BorderRadius.circular(999),
-                border: Border.all(color: isSelected ? t.accent : t.surfaceBorder),
-              ),
-              child: Row(
-                children: [
-                  PubAvatar(initials: p.initials, color: p.color, theme: t, size: 24),
-                  const SizedBox(width: 8),
-                  Text(p.name, style: TextStyle(color: isSelected ? t.textOnDark : t.textOnDark.withValues(alpha: 0.7), fontWeight: FontWeight.w600, fontSize: 13)),
-                ],
+          return Center(
+            child: GestureDetector(
+              onTap: () => onSelect(p),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 150),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: isSelected ? t.accent : Colors.transparent,
+                  borderRadius: BorderRadius.circular(999),
+                  border: Border.all(color: isSelected ? t.accent : t.surfaceBorder),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    PubAvatar(initials: p.initials, color: p.color, theme: t, size: 26),
+                    const SizedBox(width: 8),
+                    Text(p.name, style: TextStyle(color: isSelected ? t.textOnDark : t.textOnDark.withValues(alpha: 0.7), fontWeight: FontWeight.w600, fontSize: 16)),
+                  ],
+                ),
               ),
             ),
           );

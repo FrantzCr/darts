@@ -302,7 +302,7 @@ final kThemeMin = AppThemeTokens(
     bull: _c('#b34a3a'),
     wire: _ca('#fffaf0', 0.4),
     wireWidth: 0.5,
-    numColor: _c('#1a1612'),
+    numColor: _c('#f5efe3'),
     numFont: 'Inter',
     numSize: 14,
     numWeight: FontWeight.w500,

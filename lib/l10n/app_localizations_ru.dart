@@ -142,7 +142,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get atLeastTwoPlayers => 'Добавьте минимум 2 игрока';
 
   @override
-  String get gameDesc301 => '301 · двойной выход';
+  String get gameDesc301 => 'Выберите режим игры';
 
   @override
   String get winRate => 'Процент побед';

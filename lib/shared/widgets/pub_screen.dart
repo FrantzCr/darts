@@ -23,8 +23,8 @@ class PubScreen extends StatelessWidget {
       floatingActionButtonLocation: fabLocation ?? FloatingActionButtonLocation.endFloat,
       body: Stack(
         children: [
-          if (theme.shape.texture == 'diagonal') _DiagonalTexture(color: theme.surfaceBorder),
-          if (theme.shape.texture == 'grid') _GridTexture(color: theme.surfaceBorder),
+          if (theme.shape.texture == 'diagonal') IgnorePointer(child: _DiagonalTexture(color: theme.surfaceBorder)),
+          if (theme.shape.texture == 'grid') IgnorePointer(child: _GridTexture(color: theme.surfaceBorder)),
           child,
         ],
       ),

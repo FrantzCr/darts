@@ -56,7 +56,7 @@ class _BrandBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
           l10n.homeTitle,
@@ -69,13 +69,9 @@ class _BrandBar extends StatelessWidget {
           ),
         ),
         const Spacer(),
-        Container(
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(
-            color: t.accent,
-            shape: BoxShape.circle,
-          ),
+        GestureDetector(
+          onTap: () => context.go('/settings'),
+          child: Icon(Icons.settings_outlined, color: t.textOnDark.withValues(alpha: 0.65), size: 24),
         ),
       ],
     );

@@ -1,4 +1,5 @@
 import 'dart_throw.dart';
+import 'game_mode.dart';
 import 'game_session.dart';
 import 'player.dart';
 
@@ -33,6 +34,8 @@ class ActiveGameState {
   final List<TurnRecord> completedTurns;
   final Map<String, int> doubleAttemptsByPlayer;
   final Map<String, int> doubleHitsByPlayer;
+  final int startScore;
+  final GameMode gameMode;
 
   const ActiveGameState({
     required this.players,
@@ -45,6 +48,8 @@ class ActiveGameState {
     this.completedTurns = const [],
     this.doubleAttemptsByPlayer = const {},
     this.doubleHitsByPlayer = const {},
+    this.startScore = 301,
+    this.gameMode = GameMode.classic,
   });
 
   ActivePlayer get me => players[activeIndex];
@@ -54,6 +59,10 @@ class ActiveGameState {
   int get projected => me.score - turnTotal;
 
   bool get willBust => projected < 0;
+
+  // RTC helpers
+  int get rtcTarget => me.score; // current number to hit (1-20)
+  bool get isRtc => gameMode == GameMode.rtc;
 
   bool get turnComplete => turn.length >= 3;
 
@@ -78,5 +87,7 @@ class ActiveGameState {
     completedTurns: completedTurns ?? this.completedTurns,
     doubleAttemptsByPlayer: doubleAttemptsByPlayer ?? this.doubleAttemptsByPlayer,
     doubleHitsByPlayer: doubleHitsByPlayer ?? this.doubleHitsByPlayer,
+    startScore: startScore,
+    gameMode: gameMode,
   );
 }

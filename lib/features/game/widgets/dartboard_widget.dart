@@ -59,7 +59,7 @@ class _DartboardPainter extends CustomPainter {
     this.lastHitId,
     required this.onHit,
     this.turnDarts = const [],
-  });
+  }) : super(repaint: PaintingBinding.instance.systemFonts);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -274,12 +274,19 @@ class TappableDartboardWidget extends StatelessWidget {
     // Beyond double ring + snap margin → miss
     if (r > BoardRadii.doubleO + snap) return null;
 
+    // Place the dot at midRadius in the tap direction so it always
+    // sits visually inside the scored zone, not at the raw pointer position.
+    Offset zonePos(double midRadius) =>
+        r == 0 ? Offset(0, midRadius) : p * (midRadius / r);
+
     // ── Bull zones (priority, checked before sector logic) ───────
     if (r <= BoardRadii.bull + snap) {
-      return DartThrow(id: 'bull-50', sector: 50, multiplier: DartMultiplier.double, value: 50, tapOffset: p);
+      return DartThrow(id: 'bull-50', sector: 50, multiplier: DartMultiplier.double, value: 50,
+          tapOffset: zonePos(BoardRadii.bull / 2));
     }
     if (r <= BoardRadii.outerBull + snap) {
-      return DartThrow(id: 'bull-25', sector: 25, multiplier: DartMultiplier.single, value: 25, tapOffset: p);
+      return DartThrow(id: 'bull-25', sector: 25, multiplier: DartMultiplier.single, value: 25,
+          tapOffset: zonePos((BoardRadii.bull + BoardRadii.outerBull) / 2));
     }
 
     // Determine sector by angle
@@ -291,27 +298,32 @@ class TappableDartboardWidget extends StatelessWidget {
     String ring;
     DartMultiplier mult;
     int value;
+    double midR;
 
     // ── Double ring (snapped inward and outward) ──────────────────
     if (r >= BoardRadii.doubleI - snap && r <= BoardRadii.doubleO + snap) {
       ring = 'double';
       mult = DartMultiplier.double;
       value = val * 2;
+      midR = (BoardRadii.doubleI + BoardRadii.doubleO) / 2;
     // ── Triple ring (snapped inward and outward) ──────────────────
     } else if (r >= BoardRadii.tripleI - snap && r <= BoardRadii.tripleO + snap) {
       ring = 'triple';
       mult = DartMultiplier.triple;
       value = val * 3;
+      midR = (BoardRadii.tripleI + BoardRadii.tripleO) / 2;
     // ── Single-out (remaining gap between triple+snap and double-snap) ──
     } else if (r > BoardRadii.tripleO + snap) {
       ring = 'single-out';
       mult = DartMultiplier.single;
       value = val;
+      midR = (BoardRadii.tripleO + BoardRadii.doubleI) / 2;
     // ── Single-in (between outerBull+snap and tripleI-snap) ───────
     } else {
       ring = 'single-in';
       mult = DartMultiplier.single;
       value = val;
+      midR = (BoardRadii.outerBull + BoardRadii.tripleI) / 2;
     }
 
     return DartThrow(
@@ -319,7 +331,7 @@ class TappableDartboardWidget extends StatelessWidget {
       sector: val,
       multiplier: mult,
       value: value,
-      tapOffset: p,
+      tapOffset: zonePos(midR),
     );
   }
 

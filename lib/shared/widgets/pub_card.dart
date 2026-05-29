@@ -37,7 +37,7 @@ class PubCard extends StatelessWidget {
               padding: padding ?? const EdgeInsets.all(16),
               child: child,
             ),
-            if (hasTicks) _CornerTicks(color: theme.accent),
+            if (hasTicks) IgnorePointer(child: _CornerTicks(color: theme.accent)),
           ],
         ),
       ),

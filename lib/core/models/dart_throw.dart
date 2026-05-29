@@ -9,6 +9,8 @@ class DartThrow {
   final int value;
   // viewBox coords (0,0 = center of board), null for misses
   final Offset? tapOffset;
+  // true when this dart hit its RTC target
+  final bool rtcHit;
 
   const DartThrow({
     required this.id,
@@ -16,6 +18,7 @@ class DartThrow {
     required this.multiplier,
     required this.value,
     this.tapOffset,
+    this.rtcHit = false,
   });
 
   String get label {

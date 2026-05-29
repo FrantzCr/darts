@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/themes/theme_provider.dart';
 import '../../../features/history/providers/history_provider.dart';
 import '../../../features/profile/providers/player_provider.dart';
+import '../../../shared/widgets/pub_back_button.dart';
 import '../../../shared/widgets/pub_screen.dart';
 import '../../../shared/widgets/theme_toggle_fab.dart';
 
@@ -37,10 +38,7 @@ class HistoryDetailScreen extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
               child: Row(
                 children: [
-                  GestureDetector(
-                    onTap: () => context.go('/history'),
-                    child: Icon(Icons.arrow_back_ios, color: t.textOnDark, size: 20),
-                  ),
+                  PubBackButton(t: t, onTap: () => context.go('/history')),
                   const SizedBox(width: 12),
                   Text('Détail de la partie', style: TextStyle(color: t.textOnDark, fontSize: 20, fontWeight: FontWeight.w700, fontFamily: t.displayFont)),
                 ],

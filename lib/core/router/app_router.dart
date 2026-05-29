@@ -6,6 +6,7 @@ import '../../features/home/screens/home_screen.dart';
 import '../../features/new_game/screens/new_game_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
 import '../../features/result/screens/result_screen.dart';
+import '../../features/settings/screens/settings_screen.dart';
 import '../../features/stats/screens/stats_screen.dart';
 
 final appRouter = GoRouter(
@@ -22,5 +23,6 @@ final appRouter = GoRouter(
     ),
     GoRoute(path: '/stats', builder: (_, __) => const StatsScreen()),
     GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
+    GoRoute(path: '/settings', builder: (_, __) => const SettingsScreen()),
   ],
 );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/models/game_mode.dart';
 import '../../../core/models/player.dart';
 import '../../../core/themes/theme_provider.dart';
 import '../../../core/themes/theme_tokens.dart';
@@ -8,6 +9,7 @@ import '../../../features/game/providers/game_provider.dart';
 import '../../../features/profile/providers/player_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/pub_avatar.dart';
+import '../../../shared/widgets/pub_back_button.dart';
 import '../../../shared/widgets/pub_button.dart';
 import '../../../shared/widgets/pub_screen.dart';
 import '../../../shared/widgets/theme_toggle_fab.dart';
@@ -31,6 +33,8 @@ class _NewGameScreenState extends ConsumerState<NewGameScreen> {
   final _nameCtrl = TextEditingController();
   String _pickedColor = _kColors[0];
   String _pickedHand = 'right';
+  int _startScore = 301;
+  GameMode _gameMode = GameMode.classic;
 
   @override
   void dispose() {
@@ -65,7 +69,7 @@ class _NewGameScreenState extends ConsumerState<NewGameScreen> {
 
   void _startGame() {
     if (_selected.length < 2) return;
-    ref.read(gameProvider.notifier).startGame(_selected);
+    ref.read(gameProvider.notifier).startGame(_selected, startScore: _startScore, gameMode: _gameMode);
     context.go('/game');
   }
 
@@ -94,7 +98,13 @@ class _NewGameScreenState extends ConsumerState<NewGameScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 8),
-                    _ModeSection(t: t),
+                    _ModeSection(
+                      t: t,
+                      selectedScore: _startScore,
+                      gameMode: _gameMode,
+                      onSelectScore: (v) => setState(() { _startScore = v; _gameMode = GameMode.classic; }),
+                      onSelectRtc: () => setState(() => _gameMode = GameMode.rtc),
+                    ),
                     const SizedBox(height: 24),
                     _SelectedPlayers(selected: _selected, t: t, onRemove: (p) => setState(() => _selected.remove(p))),
                     const SizedBox(height: 16),
@@ -155,10 +165,7 @@ class _TopBar extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: () => context.go('/'),
-            child: Icon(Icons.arrow_back_ios, color: t.textOnDark, size: 20),
-          ),
+          PubBackButton(t: t, onTap: () => context.go('/')),
           const SizedBox(width: 12),
           Text(l10n.newGame, style: TextStyle(color: t.textOnDark, fontSize: 20, fontWeight: FontWeight.w700, fontFamily: t.displayFont)),
         ],
@@ -169,17 +176,28 @@ class _TopBar extends StatelessWidget {
 
 class _ModeSection extends StatelessWidget {
   final AppThemeTokens t;
-  const _ModeSection({required this.t});
+  final int selectedScore;
+  final GameMode gameMode;
+  final ValueChanged<int> onSelectScore;
+  final VoidCallback onSelectRtc;
+  const _ModeSection({
+    required this.t,
+    required this.selectedScore,
+    required this.gameMode,
+    required this.onSelectScore,
+    required this.onSelectRtc,
+  });
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Row(
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
       children: [
-        _ModeChip(label: l10n.mode301, active: true, t: t),
-        const SizedBox(width: 8),
-        _ModeChip(label: l10n.mode501, active: false, locked: true, t: t),
-        const SizedBox(width: 8),
+        _ModeChip(label: l10n.mode301, active: gameMode == GameMode.classic && selectedScore == 301, t: t, onTap: () => onSelectScore(301)),
+        _ModeChip(label: l10n.mode501, active: gameMode == GameMode.classic && selectedScore == 501, t: t, onTap: () => onSelectScore(501)),
+        _ModeChip(label: 'Clock', active: gameMode == GameMode.rtc, t: t, onTap: onSelectRtc),
         _ModeChip(label: l10n.modeCricket, active: false, locked: true, t: t),
       ],
     );
@@ -191,26 +209,30 @@ class _ModeChip extends StatelessWidget {
   final bool active;
   final bool locked;
   final AppThemeTokens t;
-  const _ModeChip({required this.label, required this.active, this.locked = false, required this.t});
+  final VoidCallback? onTap;
+  const _ModeChip({required this.label, required this.active, this.locked = false, required this.t, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-      decoration: BoxDecoration(
-        color: active ? t.accent : t.surface.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: active ? t.accent : t.surfaceBorder.withValues(alpha: 0.5)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(label, style: TextStyle(color: active ? t.textOnDark : t.textOnDark.withValues(alpha: 0.5), fontWeight: FontWeight.w600, fontSize: 13)),
-          if (locked) ...[
-            const SizedBox(width: 4),
-            Icon(Icons.lock_outline, size: 11, color: t.textOnDark.withValues(alpha: 0.4)),
+    return GestureDetector(
+      onTap: locked ? null : onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: active ? t.accent : t.surface.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: active ? t.accent : t.surfaceBorder.withValues(alpha: 0.5)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(label, style: TextStyle(color: active ? t.textOnDark : t.textOnDark.withValues(alpha: 0.5), fontWeight: FontWeight.w600, fontSize: 13)),
+            if (locked) ...[
+              const SizedBox(width: 4),
+              Icon(Icons.lock_outline, size: 11, color: t.textOnDark.withValues(alpha: 0.4)),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

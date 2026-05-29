@@ -365,7 +365,7 @@ abstract class AppLocalizations {
   /// No description provided for @gameDesc301.
   ///
   /// In fr, this message translates to:
-  /// **'301 · double sortie'**
+  /// **'Choisir son mode de jeu'**
   String get gameDesc301;
 
   /// No description provided for @winRate.

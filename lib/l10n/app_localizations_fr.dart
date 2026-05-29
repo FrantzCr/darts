@@ -142,7 +142,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get atLeastTwoPlayers => 'Ajoutez au moins 2 joueurs';
 
   @override
-  String get gameDesc301 => '301 · double sortie';
+  String get gameDesc301 => 'Choisir son mode de jeu';
 
   @override
   String get winRate => 'Taux de victoire';

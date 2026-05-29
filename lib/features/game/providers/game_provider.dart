@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/models/active_game_state.dart';
 import '../../../core/models/dart_throw.dart';
+import '../../../core/models/game_mode.dart';
 import '../../../core/models/game_session.dart';
 import '../../../core/models/player.dart';
 import '../../history/providers/history_provider.dart';
@@ -12,20 +13,28 @@ class GameNotifier extends Notifier<ActiveGameState?> {
   @override
   ActiveGameState? build() => null;
 
-  void startGame(List<Player> players, {int startScore = 301}) {
+  void startGame(List<Player> players, {int startScore = 301, GameMode gameMode = GameMode.classic}) {
+    final initialScore = gameMode == GameMode.rtc ? 1 : startScore;
     state = ActiveGameState(
       players: players.map((p) => ActivePlayer(
         player: p,
-        score: startScore,
+        score: initialScore,
         lastTurnLabels: [],
       )).toList(),
       startedAt: DateTime.now(),
+      startScore: startScore,
+      gameMode: gameMode,
     );
   }
 
   void recordHit(DartThrow dart) {
     final s = state;
     if (s == null || s.turnComplete || s.status == GameStatus.win) return;
+
+    if (s.isRtc) {
+      _recordHitRtc(s, dart);
+      return;
+    }
 
     final newTurn = [...s.turn, dart];
     state = s.copyWith(
@@ -34,7 +43,6 @@ class GameNotifier extends Notifier<ActiveGameState?> {
       status: GameStatus.playing,
     );
 
-    // Auto-validate when the dart brings score to exactly 0 on a double.
     final scored = newTurn.fold<int>(0, (sum, d) => sum + d.value);
     final newScore = s.me.score - scored;
     if (newScore == 0) {
@@ -44,7 +52,51 @@ class GameNotifier extends Notifier<ActiveGameState?> {
       return;
     }
 
-    // clear hit highlight after 420ms
+    Future.delayed(const Duration(milliseconds: 420), () {
+      if (state?.lastHitId == dart.id) {
+        state = state?.copyWith(lastHitId: null);
+      }
+    });
+  }
+
+  void _recordHitRtc(ActiveGameState s, DartThrow dart) {
+    final target = s.me.score; // current target (1-20)
+    final hit = dart.multiplier != DartMultiplier.miss && dart.sector == target;
+    final recordedDart = DartThrow(
+      id: dart.id,
+      sector: dart.sector,
+      multiplier: dart.multiplier,
+      value: dart.value,
+      tapOffset: dart.tapOffset,
+      rtcHit: hit,
+    );
+
+    final updatedPlayers = List<ActivePlayer>.from(s.players);
+    int newTarget = target;
+    if (hit) newTarget = target + 1;
+
+    updatedPlayers[s.activeIndex] = s.me.copyWith(
+      score: newTarget,
+      lastTurnLabels: s.me.lastTurnLabels,
+    );
+
+    final newTurn = [...s.turn, recordedDart];
+    final s2 = s.copyWith(
+      turn: newTurn,
+      lastHitId: dart.id,
+      players: updatedPlayers,
+      status: GameStatus.playing,
+    );
+    state = s2;
+
+    // Win: player just completed target 20
+    if (newTarget > 20) {
+      Future.delayed(const Duration(milliseconds: 300), () {
+        if (state != null && state!.status == GameStatus.playing) validate();
+      });
+      return;
+    }
+
     Future.delayed(const Duration(milliseconds: 420), () {
       if (state?.lastHitId == dart.id) {
         state = state?.copyWith(lastHitId: null);
@@ -55,12 +107,27 @@ class GameNotifier extends Notifier<ActiveGameState?> {
   void undo() {
     final s = state;
     if (s == null || s.turn.isEmpty) return;
-    state = s.copyWith(turn: s.turn.sublist(0, s.turn.length - 1));
+
+    final removedDart = s.turn.last;
+    final newTurn = s.turn.sublist(0, s.turn.length - 1);
+
+    if (s.isRtc && removedDart.rtcHit) {
+      final updatedPlayers = List<ActivePlayer>.from(s.players);
+      updatedPlayers[s.activeIndex] = s.me.copyWith(score: s.me.score - 1);
+      state = s.copyWith(turn: newTurn, players: updatedPlayers);
+    } else {
+      state = s.copyWith(turn: newTurn);
+    }
   }
 
   void validate() {
     final s = state;
     if (s == null) return;
+
+    if (s.isRtc) {
+      _validateRtc(s);
+      return;
+    }
 
     final cur = s.me;
     final scored = s.turnTotal;
@@ -131,6 +198,39 @@ class GameNotifier extends Notifier<ActiveGameState?> {
     );
   }
 
+  void _validateRtc(ActiveGameState s) {
+    final cur = s.me;
+    final won = cur.score > 20;
+    final hitsThisTurn = s.turn.where((d) => d.rtcHit).length;
+
+    final turnRecord = TurnRecord(
+      playerId: cur.player.id,
+      roundNumber: s.round,
+      dartLabels: s.turn.map((d) => d.label).toList(),
+      total: hitsThisTurn,
+      remaining: won ? 0 : 20 - (cur.score - 1),
+      bust: false,
+    );
+    final newTurns = [...s.completedTurns, turnRecord];
+
+    if (won) {
+      final winState = s.copyWith(
+        status: GameStatus.win,
+        turn: [],
+        completedTurns: newTurns,
+      );
+      state = winState;
+      _finalizeGame(winState);
+      return;
+    }
+
+    _advanceTurn(
+      s.copyWith(completedTurns: newTurns),
+      scored: hitsThisTurn,
+      newScore: cur.score,
+    );
+  }
+
   void _advanceTurn(ActiveGameState s, {required int scored, required int newScore}) {
     final nextIndex = (s.activeIndex + 1) % s.players.length;
     final nextRound = nextIndex == 0 ? s.round + 1 : s.round;
@@ -165,7 +265,7 @@ class GameNotifier extends Notifier<ActiveGameState?> {
     final playerNotifier = ref.read(playerProvider.notifier);
     for (final ap in game.players) {
       final p = ap.player;
-      final isWinner = ap.score == 0;
+      final isWinner = game.isRtc ? ap.score > 20 : ap.score == 0;
       final playerTurns = game.completedTurns.where((t) => t.playerId == p.id).toList();
       final validTurns = playerTurns.where((t) => !t.bust).toList();
 

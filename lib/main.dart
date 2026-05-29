@@ -11,6 +11,7 @@ import 'core/models/player.dart';
 import 'core/router/app_router.dart';
 import 'core/themes/app_theme.dart';
 import 'core/themes/theme_provider.dart';
+import 'features/settings/providers/locale_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,20 +39,24 @@ class _DartsAppState extends ConsumerState<DartsApp> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref.read(themeProvider.notifier).load());
+    Future.microtask(() async {
+      await ref.read(themeProvider.notifier).load();
+      await ref.read(localeProvider.notifier).load();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final tokens = ref.watch(activeThemeTokensProvider);
     final theme = buildMaterialTheme(tokens);
+    final locale = ref.watch(localeProvider);
 
     return MaterialApp.router(
       title: 'Fléchettes',
       debugShowCheckedModeBanner: false,
       theme: theme,
       routerConfig: appRouter,
-      locale: const Locale('fr'),
+      locale: locale,
       supportedLocales: const [
         Locale('fr'),
         Locale('en'),

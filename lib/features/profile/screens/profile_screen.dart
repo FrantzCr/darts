@@ -7,6 +7,7 @@ import '../../../core/themes/theme_tokens.dart';
 import '../../../features/profile/providers/player_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/pub_avatar.dart';
+import '../../../shared/widgets/pub_back_button.dart';
 import '../../../shared/widgets/pub_button.dart';
 import '../../../shared/widgets/pub_screen.dart';
 import '../../../shared/widgets/theme_toggle_fab.dart';
@@ -138,10 +139,7 @@ class _TopBar extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: () => context.go('/'),
-            child: Icon(Icons.arrow_back_ios, color: t.textOnDark, size: 20),
-          ),
+          PubBackButton(t: t, onTap: () => context.go('/')),
           const SizedBox(width: 12),
           Text(l10n.players, style: TextStyle(color: t.textOnDark, fontSize: 20, fontWeight: FontWeight.w700, fontFamily: t.displayFont)),
           const Spacer(),

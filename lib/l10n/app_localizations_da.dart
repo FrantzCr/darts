@@ -142,7 +142,7 @@ class AppLocalizationsDa extends AppLocalizations {
   String get atLeastTwoPlayers => 'Tilføj mindst 2 spillere';
 
   @override
-  String get gameDesc301 => '301 · dobbelt ud';
+  String get gameDesc301 => 'Vælg din spiltype';
 
   @override
   String get winRate => 'Vinderprocent';
