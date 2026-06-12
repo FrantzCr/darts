@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/themes/theme_provider.dart';
 import '../../../core/themes/theme_tokens.dart';
+import '../../../features/auth/providers/auth_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/pub_back_button.dart';
 import '../../../shared/widgets/pub_card.dart';
@@ -26,6 +28,7 @@ class SettingsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final currentLocale = ref.watch(localeProvider);
     final currentTheme = ref.watch(themeProvider);
+    final authUser = ref.watch(authUserProvider);
 
     return PubScreen(
       theme: t,
@@ -55,6 +58,20 @@ class SettingsScreen extends ConsumerWidget {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
                 children: [
+                  _SectionLabel(label: 'Compte', t: t),
+                  const SizedBox(height: 8),
+                  PubCard(
+                    theme: t,
+                    padding: EdgeInsets.zero,
+                    child: authUser.when(
+                      data: (user) => user == null
+                          ? _SignInRow(t: t, onTap: () => context.go('/login'))
+                          : _AccountRow(user: user, t: t),
+                      loading: () => const SizedBox(height: 56),
+                      error: (_, __) => _SignInRow(t: t, onTap: () => context.go('/login')),
+                    ),
+                  ),
+                  const SizedBox(height: 28),
                   _SectionLabel(label: 'Langue', t: t),
                   const SizedBox(height: 8),
                   PubCard(
@@ -104,6 +121,104 @@ class SettingsScreen extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _SignInRow extends StatelessWidget {
+  final AppThemeTokens t;
+  final VoidCallback onTap;
+  const _SignInRow({required this.t, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        color: Colors.transparent,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Icon(Icons.login_rounded, color: t.accent, size: 22),
+            const SizedBox(width: 14),
+            Text(
+              'Se connecter avec Google',
+              style: TextStyle(color: t.accent, fontSize: 15, fontWeight: FontWeight.w600),
+            ),
+            const Spacer(),
+            Icon(Icons.chevron_right_rounded, color: t.textDim, size: 20),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AccountRow extends ConsumerWidget {
+  final User user;
+  final AppThemeTokens t;
+  const _AccountRow({required this.user, required this.t});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Column(
+      children: [
+        Container(
+          color: Colors.transparent,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 16,
+                backgroundImage: user.photoURL != null ? NetworkImage(user.photoURL!) : null,
+                backgroundColor: t.accent.withValues(alpha: 0.2),
+                child: user.photoURL == null
+                    ? Text(
+                        (user.displayName ?? user.email ?? '?')[0].toUpperCase(),
+                        style: TextStyle(color: t.accent, fontWeight: FontWeight.w700, fontSize: 14),
+                      )
+                    : null,
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      user.displayName ?? 'Utilisateur',
+                      style: TextStyle(color: t.text, fontSize: 15, fontWeight: FontWeight.w600),
+                    ),
+                    Text(
+                      user.email ?? '',
+                      style: TextStyle(color: t.textDim, fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        Divider(height: 1, color: t.surfaceBorder.withValues(alpha: 0.5)),
+        GestureDetector(
+          onTap: () async {
+            await signOut();
+          },
+          child: Container(
+            color: Colors.transparent,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                Icon(Icons.logout_rounded, color: Colors.red.withValues(alpha: 0.8), size: 20),
+                const SizedBox(width: 14),
+                Text(
+                  'Se déconnecter',
+                  style: TextStyle(color: Colors.red.withValues(alpha: 0.8), fontSize: 15),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

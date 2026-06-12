@@ -6,16 +6,20 @@ import '../../../core/models/dart_throw.dart';
 import '../../../core/models/game_mode.dart';
 import '../../../core/models/game_session.dart';
 import '../../../core/models/player.dart';
+import '../../../core/services/firestore_game_service.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../../history/providers/history_provider.dart';
 import '../../profile/providers/player_provider.dart';
 
 class GameNotifier extends Notifier<ActiveGameState?> {
+  String? _firestoreGameId;
+
   @override
   ActiveGameState? build() => null;
 
   void startGame(List<Player> players, {int startScore = 301, GameMode gameMode = GameMode.classic}) {
     final initialScore = gameMode == GameMode.rtc ? 1 : startScore;
-    state = ActiveGameState(
+    final newState = ActiveGameState(
       players: players.map((p) => ActivePlayer(
         player: p,
         score: initialScore,
@@ -25,6 +29,28 @@ class GameNotifier extends Notifier<ActiveGameState?> {
       startScore: startScore,
       gameMode: gameMode,
     );
+    state = newState;
+    _maybeCreateFirestoreGame(newState);
+  }
+
+  void _maybeCreateFirestoreGame(ActiveGameState s) {
+    final user = ref.read(authUserProvider).value;
+    if (user == null) return;
+    FirestoreGameService.createActiveGame(
+      hostUid: user.uid,
+      hostName: user.displayName ?? user.email ?? 'Joueur',
+      game: s,
+    ).then((result) {
+      _firestoreGameId = result.gameId;
+      ref.read(liveGameCodeProvider.notifier).state = result.code;
+    }).catchError((_) {});
+  }
+
+  void _pushToFirestore() {
+    final s = state;
+    final id = _firestoreGameId;
+    if (s == null || id == null) return;
+    FirestoreGameService.updateState(id, s);
   }
 
   void recordHit(DartThrow dart) {
@@ -42,6 +68,7 @@ class GameNotifier extends Notifier<ActiveGameState?> {
       lastHitId: dart.id,
       status: GameStatus.playing,
     );
+    _pushToFirestore();
 
     final scored = newTurn.fold<int>(0, (sum, d) => sum + d.value);
     final newScore = s.me.score - scored;
@@ -88,6 +115,7 @@ class GameNotifier extends Notifier<ActiveGameState?> {
       status: GameStatus.playing,
     );
     state = s2;
+    _pushToFirestore();
 
     // Win: player just completed target 20
     if (newTarget > 20) {
@@ -240,6 +268,7 @@ class GameNotifier extends Notifier<ActiveGameState?> {
       round: nextRound,
       status: GameStatus.playing,
     );
+    _pushToFirestore();
   }
 
   // Returns (attempts, hits) for this turn based on remaining score before each dart.
@@ -260,6 +289,12 @@ class GameNotifier extends Notifier<ActiveGameState?> {
   }
 
   Future<void> _finalizeGame(ActiveGameState game) async {
+    final firestoreId = _firestoreGameId;
+    if (firestoreId != null) {
+      await FirestoreGameService.finalizeGame(firestoreId, game);
+      _firestoreGameId = null;
+      ref.read(liveGameCodeProvider.notifier).state = null;
+    }
     await ref.read(historyProvider.notifier).saveGame(game);
 
     final playerNotifier = ref.read(playerProvider.notifier);
@@ -297,7 +332,11 @@ class GameNotifier extends Notifier<ActiveGameState?> {
     }
   }
 
-  void reset() => state = null;
+  void reset() {
+    _firestoreGameId = null;
+    ref.read(liveGameCodeProvider.notifier).state = null;
+    state = null;
+  }
 }
 
 final gameProvider = NotifierProvider<GameNotifier, ActiveGameState?>(GameNotifier.new);

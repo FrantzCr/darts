@@ -31,6 +31,8 @@ class HomeScreen extends ConsumerWidget {
                   _BrandBar(t: t),
                   const SizedBox(height: 28),
                   _HeroCTA(t: t),
+                  const SizedBox(height: 12),
+                  _LiveCTA(t: t),
                   const SizedBox(height: 24),
                   if (players.isNotEmpty) ...[
                     _LeaderboardCard(t: t, players: players),
@@ -124,6 +126,53 @@ class _HeroCTA extends ConsumerWidget {
               ),
             ),
             Icon(Icons.arrow_forward_ios, color: t.textOnDark, size: 22),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LiveCTA extends StatelessWidget {
+  final AppThemeTokens t;
+  const _LiveCTA({required this.t});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => context.go('/live'),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+        decoration: BoxDecoration(
+          color: t.surface.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(t.shape.cardRadius),
+          border: Border.all(color: t.surfaceBorder.withValues(alpha: 0.5)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+              decoration: BoxDecoration(
+                color: Colors.red.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: Colors.red.withValues(alpha: 0.4), width: 1),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(width: 5, height: 5, decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle)),
+                  const SizedBox(width: 4),
+                  const Text('LIVE', style: TextStyle(color: Colors.red, fontSize: 10, fontWeight: FontWeight.w800)),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'Parties en cours',
+              style: TextStyle(color: t.textOnDark, fontSize: 15, fontWeight: FontWeight.w600),
+            ),
+            const Spacer(),
+            Icon(Icons.chevron_right_rounded, color: t.textOnDark.withValues(alpha: 0.5), size: 20),
           ],
         ),
       ),
