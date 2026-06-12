@@ -65,10 +65,10 @@ class SettingsScreen extends ConsumerWidget {
                     padding: EdgeInsets.zero,
                     child: authUser.when(
                       data: (user) => user == null
-                          ? _SignInRow(t: t, onTap: () => context.go('/login'))
+                          ? _SignInRow(t: t, onTap: () => context.go('/welcome'))
                           : _AccountRow(user: user, t: t),
                       loading: () => const SizedBox(height: 56),
-                      error: (_, __) => _SignInRow(t: t, onTap: () => context.go('/login')),
+                      error: (_, __) => _SignInRow(t: t, onTap: () => context.go('/welcome')),
                     ),
                   ),
                   const SizedBox(height: 28),

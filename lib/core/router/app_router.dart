@@ -1,5 +1,4 @@
 import 'package:go_router/go_router.dart';
-import '../../features/auth/screens/login_screen.dart';
 import '../../features/game/screens/game_screen.dart';
 import '../../features/history/screens/history_detail_screen.dart';
 import '../../features/history/screens/history_screen.dart';
@@ -18,7 +17,6 @@ final appRouter = GoRouter(
   routes: [
     GoRoute(path: '/welcome', builder: (_, __) => const WelcomeScreen()),
     GoRoute(path: '/', builder: (_, __) => const HomeScreen()),
-    GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
     GoRoute(path: '/new-game', builder: (_, __) => const NewGameScreen()),
     GoRoute(path: '/game', builder: (_, __) => const GameScreen()),
     GoRoute(path: '/result', builder: (_, __) => const ResultScreen()),

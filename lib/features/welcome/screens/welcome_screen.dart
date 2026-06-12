@@ -15,6 +15,7 @@ class WelcomeScreen extends ConsumerStatefulWidget {
 
 class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
   bool _loading = false;
+  String? _error;
 
   @override
   void initState() {
@@ -25,9 +26,13 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
     });
   }
 
-  void _handleGoogleSignIn() {
-    setState(() => _loading = true);
-    signInWithGoogle();
+  Future<void> _handleGoogleSignIn() async {
+    setState(() { _loading = true; _error = null; });
+    try {
+      await signInWithGoogle();
+    } catch (e) {
+      if (mounted) setState(() { _loading = false; _error = e.toString(); });
+    }
   }
 
   @override
@@ -61,6 +66,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
             _Actions(
               t: t,
               loading: _loading,
+              error: _error,
               onGoogleSignIn: _handleGoogleSignIn,
               onSkip: () => context.go('/'),
             ),
@@ -122,13 +128,6 @@ class _Features extends StatelessWidget {
             label: 'Stats',
             t: t,
             onTap: () => context.go('/stats'),
-          ),
-          const SizedBox(width: 10),
-          _FeatureChip(
-            icon: Icons.people_rounded,
-            label: 'Joueurs',
-            t: t,
-            onTap: () => context.go('/profile'),
           ),
           const SizedBox(width: 10),
           _LiveChip(t: t, onTap: () => context.go('/live')),
@@ -223,6 +222,7 @@ class _LiveChip extends StatelessWidget {
 class _Actions extends StatelessWidget {
   final AppThemeTokens t;
   final bool loading;
+  final String? error;
   final VoidCallback onGoogleSignIn;
   final VoidCallback onSkip;
   const _Actions({
@@ -230,6 +230,7 @@ class _Actions extends StatelessWidget {
     required this.loading,
     required this.onGoogleSignIn,
     required this.onSkip,
+    this.error,
   });
 
   @override
@@ -239,6 +240,14 @@ class _Actions extends StatelessWidget {
       child: Column(
         children: [
           _GoogleButton(t: t, loading: loading, onTap: onGoogleSignIn),
+          if (error != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              error!,
+              style: const TextStyle(color: Colors.red, fontSize: 11),
+              textAlign: TextAlign.center,
+            ),
+          ],
           const SizedBox(height: 10),
           Text(
             'Sauvegarde cloud · Parties en direct · Stats partagées',
