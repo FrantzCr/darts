@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../core/themes/theme_provider.dart';
 import '../../../core/themes/theme_tokens.dart';
 import '../../../features/auth/providers/auth_provider.dart';
@@ -65,10 +64,18 @@ class SettingsScreen extends ConsumerWidget {
                     padding: EdgeInsets.zero,
                     child: authUser.when(
                       data: (user) => user == null
-                          ? _SignInRow(t: t, onTap: () => context.go('/welcome'))
+                          ? _SignInRow(t: t, onTap: () {
+                              signInWithGoogle().catchError((e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(e.toString()), backgroundColor: t.bg),
+                                );
+                              });
+                            })
                           : _AccountRow(user: user, t: t),
                       loading: () => const SizedBox(height: 56),
-                      error: (_, __) => _SignInRow(t: t, onTap: () => context.go('/welcome')),
+                      error: (_, __) => _SignInRow(t: t, onTap: () {
+                        signInWithGoogle().catchError((_) {});
+                      }),
                     ),
                   ),
                   const SizedBox(height: 28),

@@ -70,15 +70,6 @@ class GameNotifier extends Notifier<ActiveGameState?> {
     );
     _pushToFirestore();
 
-    final scored = newTurn.fold<int>(0, (sum, d) => sum + d.value);
-    final newScore = s.me.score - scored;
-    if (newScore == 0) {
-      Future.delayed(const Duration(milliseconds: 300), () {
-        if (state != null && state!.status == GameStatus.playing) validate();
-      });
-      return;
-    }
-
     Future.delayed(const Duration(milliseconds: 420), () {
       if (state?.lastHitId == dart.id) {
         state = state?.copyWith(lastHitId: null);
@@ -116,14 +107,6 @@ class GameNotifier extends Notifier<ActiveGameState?> {
     );
     state = s2;
     _pushToFirestore();
-
-    // Win: player just completed target 20
-    if (newTarget > 20) {
-      Future.delayed(const Duration(milliseconds: 300), () {
-        if (state != null && state!.status == GameStatus.playing) validate();
-      });
-      return;
-    }
 
     Future.delayed(const Duration(milliseconds: 420), () {
       if (state?.lastHitId == dart.id) {

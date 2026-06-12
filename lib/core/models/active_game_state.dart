@@ -64,7 +64,12 @@ class ActiveGameState {
   int get rtcTarget => me.score; // current number to hit (1-20)
   bool get isRtc => gameMode == GameMode.rtc;
 
-  bool get turnComplete => turn.length >= 3;
+  bool get turnComplete {
+    if (turn.length >= 3) return true;
+    if (turn.isEmpty) return false;
+    if (isRtc) return me.score > 20; // all 20 targets hit
+    return projected == 0; // classic: exact checkout
+  }
 
   ActiveGameState copyWith({
     List<ActivePlayer>? players,
