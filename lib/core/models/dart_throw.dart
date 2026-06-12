@@ -22,7 +22,7 @@ class DartThrow {
   });
 
   String get label {
-    if (multiplier == DartMultiplier.miss) return 'M';
+    if (multiplier == DartMultiplier.miss) return id == 'miss-rim' ? 'M' : 'Hors';
     if (id == 'bull-50') return 'BULL';
     if (id == 'bull-25') return '25';
     if (multiplier == DartMultiplier.triple) return 'T$sector';
@@ -30,6 +30,16 @@ class DartThrow {
     return '$sector';
   }
 
+  // Dart that hit the wooden rim/frame of the board (scores 0, shows dot on rim)
+  static DartThrow rimMiss({Offset? tapOffset}) => DartThrow(
+    id: 'miss-rim',
+    sector: 0,
+    multiplier: DartMultiplier.miss,
+    value: 0,
+    tapOffset: tapOffset,
+  );
+
+  // Dart that completely missed the board (scores 0, no dot)
   static DartThrow miss({Offset? tapOffset}) => DartThrow(
     id: 'miss',
     sector: 0,

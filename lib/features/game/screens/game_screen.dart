@@ -1,5 +1,6 @@
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/checkouts.dart';
@@ -48,6 +49,14 @@ class GameScreen extends ConsumerWidget {
                 : _PortraitLayout(game: game, t: t),
           ),
           if (game.status == GameStatus.win) const _WinConfetti(),
+          // Flash rouge pour "Hors" (miss complet hors cible)
+          IgnorePointer(
+            child: AnimatedOpacity(
+              opacity: game.lastHitId == 'miss' ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 120),
+              child: Container(color: Colors.red.withValues(alpha: 0.18)),
+            ),
+          ),
         ],
       ),
     );
@@ -69,14 +78,25 @@ class _PortraitLayout extends ConsumerWidget {
         _ScoreBanner(game: game, t: t),
         const SizedBox(height: 12),
         Expanded(
-          child: Center(
-            child: TappableDartboardWidget(
-              theme: t,
-              lastHitId: game.lastHitId,
-              turnDarts: game.turn,
-              size: MediaQuery.of(context).size.width * 0.9,
-              onHit: (dart) => ref.read(gameProvider.notifier).recordHit(dart),
-              onMiss: (p) => ref.read(gameProvider.notifier).recordHit(DartThrow.miss(tapOffset: p)),
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapUp: (_) {
+              if (game.turnComplete || game.status == GameStatus.win) return;
+              HapticFeedback.heavyImpact();
+              ref.read(gameProvider.notifier).recordHit(DartThrow.miss());
+            },
+            child: Center(
+              child: TappableDartboardWidget(
+                theme: t,
+                lastHitId: game.lastHitId,
+                turnDarts: game.turn,
+                size: MediaQuery.of(context).size.width * 0.9,
+                onHit: (dart) => ref.read(gameProvider.notifier).recordHit(dart),
+                onMiss: (_) {
+                  HapticFeedback.heavyImpact();
+                  ref.read(gameProvider.notifier).recordHit(DartThrow.miss());
+                },
+              ),
             ),
           ),
         ),
@@ -103,14 +123,25 @@ class _LandscapeLayout extends ConsumerWidget {
       children: [
         SizedBox(
           width: boardSize,
-          child: Center(
-            child: TappableDartboardWidget(
-              theme: t,
-              lastHitId: game.lastHitId,
-              turnDarts: game.turn,
-              size: boardSize,
-              onHit: (dart) => ref.read(gameProvider.notifier).recordHit(dart),
-              onMiss: (p) => ref.read(gameProvider.notifier).recordHit(DartThrow.miss(tapOffset: p)),
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapUp: (_) {
+              if (game.turnComplete || game.status == GameStatus.win) return;
+              HapticFeedback.heavyImpact();
+              ref.read(gameProvider.notifier).recordHit(DartThrow.miss());
+            },
+            child: Center(
+              child: TappableDartboardWidget(
+                theme: t,
+                lastHitId: game.lastHitId,
+                turnDarts: game.turn,
+                size: boardSize,
+                onHit: (dart) => ref.read(gameProvider.notifier).recordHit(dart),
+                onMiss: (_) {
+                  HapticFeedback.heavyImpact();
+                  ref.read(gameProvider.notifier).recordHit(DartThrow.miss());
+                },
+              ),
             ),
           ),
         ),

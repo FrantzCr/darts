@@ -156,7 +156,7 @@ class _DartboardPainter extends CustomPainter {
       canvas.drawCircle(Offset.zero, BoardRadii.bull, Paint()..color = tokens.bull);
       return;
     }
-    if (hitId == 'miss') return;
+    if (hitId == 'miss' || hitId == 'miss-rim') return;
 
     // Parse zone id: 's{val}-{ring}'
     final parts = hitId.split('-');
@@ -271,8 +271,11 @@ class TappableDartboardWidget extends StatelessWidget {
     const snap = 12.0;
 
     if (r > BoardRadii.outer) return null;
-    // Beyond double ring + snap margin → miss
-    if (r > BoardRadii.doubleO + snap) return null;
+    // Rim area (wooden frame between double ring and outer circle)
+    if (r > BoardRadii.doubleO + snap) {
+      const midR = (BoardRadii.doubleO + BoardRadii.outer) / 2;
+      return DartThrow.rimMiss(tapOffset: r == 0 ? const Offset(0, midR) : p * (midR / r));
+    }
 
     // Place the dot at midRadius in the tap direction so it always
     // sits visually inside the scored zone, not at the raw pointer position.
