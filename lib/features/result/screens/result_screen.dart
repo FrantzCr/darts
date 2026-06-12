@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/models/active_game_state.dart';
+import '../../../core/models/player.dart';
 import '../../../core/themes/theme_provider.dart';
 import '../../../core/themes/theme_tokens.dart';
 import '../../../features/game/providers/game_provider.dart';
@@ -204,6 +205,25 @@ class _FooterButtons extends StatelessWidget {
   final WidgetRef ref;
   const _FooterButtons({required this.t, required this.game, required this.ref});
 
+  void _showRematchSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) => _RematchOrderSheet(
+        game: game,
+        onStart: (players) {
+          ref.read(gameProvider.notifier).startGame(
+            players,
+            startScore: game.startScore,
+            gameMode: game.gameMode,
+          );
+          context.go('/game');
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -215,10 +235,7 @@ class _FooterButtons extends StatelessWidget {
           kind: PubButtonKind.gold,
           expanded: true,
           icon: Icons.replay,
-          onPressed: () {
-            ref.read(gameProvider.notifier).startGame(game.players.map((p) => p.player).toList());
-            context.go('/game');
-          },
+          onPressed: () => _showRematchSheet(context),
         ),
         const SizedBox(height: 12),
         Row(
@@ -249,6 +266,147 @@ class _FooterButtons extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+// ── Bottom sheet ─────────────────────────────────────────────────────────────
+
+class _RematchOrderSheet extends ConsumerStatefulWidget {
+  final ActiveGameState game;
+  final void Function(List<Player> players) onStart;
+  const _RematchOrderSheet({required this.game, required this.onStart});
+
+  @override
+  ConsumerState<_RematchOrderSheet> createState() => _RematchOrderSheetState();
+}
+
+class _RematchOrderSheetState extends ConsumerState<_RematchOrderSheet> {
+  late List<Player> _players;
+
+  @override
+  void initState() {
+    super.initState();
+    _players = widget.game.players.map((p) => p.player).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final t = ref.watch(activeThemeTokensProvider);
+    final l10n = AppLocalizations.of(context);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: t.bg,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      padding: EdgeInsets.fromLTRB(16, 12, 16, 24 + MediaQuery.of(context).padding.bottom),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: t.surfaceBorder,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            l10n.rematchOrderTitle,
+            style: TextStyle(
+              color: t.textOnDark,
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              fontFamily: t.displayFont,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            l10n.dragToReorder,
+            style: TextStyle(color: t.textDim, fontSize: 13),
+          ),
+          const SizedBox(height: 16),
+          ReorderableListView(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            buildDefaultDragHandles: false,
+            onReorder: (oldIndex, newIndex) {
+              setState(() {
+                if (newIndex > oldIndex) newIndex--;
+                final item = _players.removeAt(oldIndex);
+                _players.insert(newIndex, item);
+              });
+            },
+            children: [
+              for (int i = 0; i < _players.length; i++)
+                _PlayerOrderTile(
+                  key: ValueKey(_players[i].id),
+                  index: i,
+                  player: _players[i],
+                  t: t,
+                ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          PubButton(
+            label: l10n.startGame,
+            theme: t,
+            kind: PubButtonKind.gold,
+            expanded: true,
+            icon: Icons.play_arrow_rounded,
+            onPressed: () {
+              Navigator.of(context).pop();
+              widget.onStart(_players);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PlayerOrderTile extends StatelessWidget {
+  final int index;
+  final Player player;
+  final AppThemeTokens t;
+  const _PlayerOrderTile({super.key, required this.index, required this.player, required this.t});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: t.surface.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(t.shape.smRadius),
+        border: Border.all(color: t.surfaceBorder.withValues(alpha: 0.4)),
+      ),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 24,
+            child: Text(
+              '${index + 1}',
+              style: TextStyle(color: t.textDim, fontSize: 14, fontWeight: FontWeight.w700, fontFamily: t.monoFont),
+            ),
+          ),
+          const SizedBox(width: 10),
+          PubAvatar(initials: player.initials, color: player.color, theme: t, size: 36),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              player.name,
+              style: TextStyle(color: t.textOnDark, fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ),
+          ReorderableDragStartListener(
+            index: index,
+            child: Icon(Icons.drag_handle_rounded, color: t.textDim, size: 22),
+          ),
+        ],
+      ),
     );
   }
 }

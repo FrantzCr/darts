@@ -102,5 +102,27 @@
   "totalGamesTooltip": "Total parties jouées",
   "scores100plusTooltip": "Tours avec 100+ points",
   "tons180Tooltip": "Scores parfaits 180",
-  "currentStreakTooltip": "Victoires consécutives"
+  "currentStreakTooltip": "Victoires consécutives",
+  "activeGamesTitle": "Parties en cours",
+  "notSignedInBroadcast": "Non connecté — les parties ne seront pas diffusées",
+  "joinByCode": "Rejoindre avec un code",
+  "codeBtnLabel": "Code",
+  "codeNotFound": "Code introuvable : {code}",
+  "@codeNotFound": {
+    "placeholders": {
+      "code": { "type": "String" }
+    }
+  },
+  "join": "Rejoindre",
+  "connectionError": "Erreur de connexion",
+  "startGameToAppear": "Lance une partie pour qu'elle apparaisse ici",
+  "signInToStream": "Connectez-vous et lancez une partie pour la diffuser",
+  "byHost": "Par {host}",
+  "@byHost": {
+    "placeholders": {
+      "host": { "type": "String" }
+    }
+  },
+  "rematchOrderTitle": "Ordre de jeu",
+  "dragToReorder": "Faites glisser pour réorganiser"
 }

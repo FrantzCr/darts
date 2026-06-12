@@ -103,5 +103,27 @@
   "totalGamesTooltip": "Всего игр сыграно",
   "scores100plusTooltip": "Ходы со 100+ очков",
   "tons180Tooltip": "Идеальные счёты 180",
-  "currentStreakTooltip": "Побед подряд"
+  "currentStreakTooltip": "Побед подряд",
+  "activeGamesTitle": "Активные игры",
+  "notSignedInBroadcast": "Не вошли — игры не будут транслироваться",
+  "joinByCode": "Войти по коду",
+  "codeBtnLabel": "Код",
+  "codeNotFound": "Код не найден: {code}",
+  "@codeNotFound": {
+    "placeholders": {
+      "code": { "type": "String" }
+    }
+  },
+  "join": "Войти",
+  "connectionError": "Ошибка подключения",
+  "startGameToAppear": "Начни игру, чтобы она появилась здесь",
+  "signInToStream": "Войдите и начните игру для трансляции",
+  "byHost": "Игра {host}",
+  "@byHost": {
+    "placeholders": {
+      "host": { "type": "String" }
+    }
+  },
+  "rematchOrderTitle": "Порядок игроков",
+  "dragToReorder": "Перетащите для сортировки"
 }

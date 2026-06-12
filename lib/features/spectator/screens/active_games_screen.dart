@@ -5,6 +5,7 @@ import '../../../core/services/firestore_game_service.dart';
 import '../../../core/themes/theme_provider.dart';
 import '../../../core/themes/theme_tokens.dart';
 import '../../../features/auth/providers/auth_provider.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/pub_back_button.dart';
 import '../../../shared/widgets/pub_screen.dart';
 
@@ -14,6 +15,7 @@ class ActiveGamesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = ref.watch(activeThemeTokensProvider);
+    final l10n = AppLocalizations.of(context);
     final authUser = ref.watch(authUserProvider);
 
     return PubScreen(
@@ -29,7 +31,7 @@ class ActiveGamesScreen extends ConsumerWidget {
                   PubBackButton(t: t, onTap: () => context.canPop() ? context.pop() : context.go('/')),
                   const SizedBox(width: 12),
                   Text(
-                    'Parties en cours',
+                    l10n.activeGamesTitle,
                     style: TextStyle(
                       color: t.textOnDark,
                       fontSize: 20,
@@ -38,7 +40,6 @@ class ActiveGamesScreen extends ConsumerWidget {
                     ),
                   ),
                   const Spacer(),
-                  // Auth status indicator
                   authUser.when(
                     data: (user) => user != null
                         ? Tooltip(
@@ -56,7 +57,7 @@ class ActiveGamesScreen extends ConsumerWidget {
                             ),
                           )
                         : Tooltip(
-                            message: 'Non connecté — les parties ne seront pas diffusées',
+                            message: l10n.notSignedInBroadcast,
                             child: Icon(Icons.person_off_outlined, color: t.textDim, size: 20),
                           ),
                     loading: () => const SizedBox(width: 20),
@@ -72,9 +73,9 @@ class ActiveGamesScreen extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(t.shape.buttonRadius),
                         border: Border.all(color: Colors.deepOrange.withValues(alpha: 0.4), width: 1),
                       ),
-                      child: const Text(
-                        'Code',
-                        style: TextStyle(color: Colors.deepOrange, fontSize: 13, fontWeight: FontWeight.w600),
+                      child: Text(
+                        l10n.codeBtnLabel,
+                        style: const TextStyle(color: Colors.deepOrange, fontSize: 13, fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
@@ -89,13 +90,14 @@ class ActiveGamesScreen extends ConsumerWidget {
   }
 
   void _showJoinByCode(BuildContext context, AppThemeTokens t) {
+    final l10n = AppLocalizations.of(context);
     final controller = TextEditingController();
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: t.bg,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(t.shape.cardRadius)),
-        title: Text('Rejoindre avec un code', style: TextStyle(color: t.textOnDark, fontSize: 16, fontWeight: FontWeight.w700)),
+        title: Text(l10n.joinByCode, style: TextStyle(color: t.textOnDark, fontSize: 16, fontWeight: FontWeight.w700)),
         content: TextField(
           controller: controller,
           textCapitalization: TextCapitalization.characters,
@@ -112,7 +114,7 @@ class ActiveGamesScreen extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: Text('Annuler', style: TextStyle(color: t.textDim)),
+            child: Text(l10n.cancel, style: TextStyle(color: t.textDim)),
           ),
           TextButton(
             onPressed: () async {
@@ -125,13 +127,13 @@ class ActiveGamesScreen extends ConsumerWidget {
               } else if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text('Code introuvable : $code'),
+                    content: Text(l10n.codeNotFound(code)),
                     backgroundColor: t.bg,
                   ),
                 );
               }
             },
-            child: Text('Rejoindre', style: TextStyle(color: t.accent, fontWeight: FontWeight.w700)),
+            child: Text(l10n.join, style: TextStyle(color: t.accent, fontWeight: FontWeight.w700)),
           ),
         ],
       ),
@@ -146,6 +148,7 @@ class _GamesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Expanded(
       child: StreamBuilder<List<Map<String, dynamic>>>(
         stream: FirestoreGameService.watchActiveGames(),
@@ -163,7 +166,7 @@ class _GamesList extends StatelessWidget {
                     Icon(Icons.cloud_off_rounded, color: t.textDim, size: 48),
                     const SizedBox(height: 16),
                     Text(
-                      'Erreur de connexion',
+                      l10n.connectionError,
                       style: TextStyle(color: t.textOnDark, fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 8),
@@ -186,14 +189,12 @@ class _GamesList extends StatelessWidget {
                   Icon(Icons.sports_bar_outlined, color: t.textDim, size: 48),
                   const SizedBox(height: 16),
                   Text(
-                    'Aucune partie en cours',
+                    l10n.noCurrentGame,
                     style: TextStyle(color: t.textDim, fontSize: 16),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    isSignedIn
-                        ? 'Lance une partie pour qu\'elle apparaisse ici'
-                        : 'Connectez-vous et lancez une partie pour la diffuser',
+                    isSignedIn ? l10n.startGameToAppear : l10n.signInToStream,
                     style: TextStyle(color: t.textDim.withValues(alpha: 0.6), fontSize: 12),
                     textAlign: TextAlign.center,
                   ),
@@ -219,6 +220,7 @@ class _GameCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final players = (game['players'] as List).cast<Map<String, dynamic>>();
     final state = game['state'] as Map<String, dynamic>?;
     final hostName = game['hostName'] as String? ?? '';
@@ -276,14 +278,14 @@ class _GameCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Manche $round',
+                  l10n.roundLabel(round),
                   style: TextStyle(color: t.textDim, fontSize: 12),
                 ),
               ],
             ),
             const SizedBox(height: 4),
             Text(
-              'Par $hostName',
+              l10n.byHost(hostName),
               style: TextStyle(color: t.textDim, fontSize: 11),
             ),
           ],

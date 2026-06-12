@@ -103,5 +103,27 @@
   "totalGamesTooltip": "Total partidas jugadas",
   "scores100plusTooltip": "Turnos con 100+ puntos",
   "tons180Tooltip": "Puntuaciones perfectas 180",
-  "currentStreakTooltip": "Victorias consecutivas"
+  "currentStreakTooltip": "Victorias consecutivas",
+  "activeGamesTitle": "Partidas en curso",
+  "notSignedInBroadcast": "No conectado — las partidas no se transmitirán",
+  "joinByCode": "Unirse con código",
+  "codeBtnLabel": "Código",
+  "codeNotFound": "Código no encontrado: {code}",
+  "@codeNotFound": {
+    "placeholders": {
+      "code": { "type": "String" }
+    }
+  },
+  "join": "Unirse",
+  "connectionError": "Error de conexión",
+  "startGameToAppear": "Inicia una partida para que aparezca aquí",
+  "signInToStream": "Inicia sesión e inicia una partida para transmitirla",
+  "byHost": "Por {host}",
+  "@byHost": {
+    "placeholders": {
+      "host": { "type": "String" }
+    }
+  },
+  "rematchOrderTitle": "Orden de juego",
+  "dragToReorder": "Arrastra para reordenar"
 }

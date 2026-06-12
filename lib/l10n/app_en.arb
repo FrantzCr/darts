@@ -103,5 +103,27 @@
   "totalGamesTooltip": "Total games played",
   "scores100plusTooltip": "Turns with 100+ points",
   "tons180Tooltip": "Perfect 180 scores",
-  "currentStreakTooltip": "Consecutive wins"
+  "currentStreakTooltip": "Consecutive wins",
+  "activeGamesTitle": "Active games",
+  "notSignedInBroadcast": "Not signed in — games won't be broadcast",
+  "joinByCode": "Join by code",
+  "codeBtnLabel": "Code",
+  "codeNotFound": "Code not found: {code}",
+  "@codeNotFound": {
+    "placeholders": {
+      "code": { "type": "String" }
+    }
+  },
+  "join": "Join",
+  "connectionError": "Connection error",
+  "startGameToAppear": "Start a game for it to appear here",
+  "signInToStream": "Sign in and start a game to broadcast it",
+  "byHost": "By {host}",
+  "@byHost": {
+    "placeholders": {
+      "host": { "type": "String" }
+    }
+  },
+  "rematchOrderTitle": "Player order",
+  "dragToReorder": "Drag to reorder"
 }

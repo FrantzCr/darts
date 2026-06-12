@@ -103,5 +103,27 @@
   "totalGamesTooltip": "Spil i alt",
   "scores100plusTooltip": "Ture med 100+ point",
   "tons180Tooltip": "Perfekte 180-scores",
-  "currentStreakTooltip": "Sejre i træk"
+  "currentStreakTooltip": "Sejre i træk",
+  "activeGamesTitle": "Aktive spil",
+  "notSignedInBroadcast": "Ikke logget ind — spil vises ikke live",
+  "joinByCode": "Tilmeld med kode",
+  "codeBtnLabel": "Kode",
+  "codeNotFound": "Kode ikke fundet: {code}",
+  "@codeNotFound": {
+    "placeholders": {
+      "code": { "type": "String" }
+    }
+  },
+  "join": "Tilmeld",
+  "connectionError": "Forbindelsesfejl",
+  "startGameToAppear": "Start et spil for at det vises her",
+  "signInToStream": "Log ind og start et spil for at streame det",
+  "byHost": "Af {host}",
+  "@byHost": {
+    "placeholders": {
+      "host": { "type": "String" }
+    }
+  },
+  "rematchOrderTitle": "Spillerrækkefølge",
+  "dragToReorder": "Træk for at omplacere"
 }
