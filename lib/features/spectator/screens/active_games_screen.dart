@@ -56,14 +56,7 @@ class ActiveGamesScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            authUser.when(
-              data: (user) {
-                if (user == null) return _NotSignedIn(t: t);
-                return _GamesList(t: t);
-              },
-              loading: () => const Expanded(child: Center(child: CircularProgressIndicator())),
-              error: (_, __) => const SizedBox.shrink(),
-            ),
+            _GamesList(t: t, isSignedIn: authUser.value != null),
           ],
         ),
       ),
@@ -121,52 +114,10 @@ class ActiveGamesScreen extends ConsumerWidget {
   }
 }
 
-class _NotSignedIn extends StatelessWidget {
-  final AppThemeTokens t;
-  const _NotSignedIn({required this.t});
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.lock_outline, color: t.textDim, size: 48),
-              const SizedBox(height: 16),
-              Text(
-                'Connectez-vous pour voir\nles parties en direct',
-                style: TextStyle(color: t.textOnDark, fontSize: 16, fontWeight: FontWeight.w600),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              GestureDetector(
-                onTap: () => context.go('/login'),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: t.accent,
-                    borderRadius: BorderRadius.circular(t.shape.buttonRadius),
-                  ),
-                  child: Text(
-                    'Se connecter',
-                    style: TextStyle(color: t.textOnDark, fontWeight: FontWeight.w700, fontSize: 15),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _GamesList extends StatelessWidget {
   final AppThemeTokens t;
-  const _GamesList({required this.t});
+  final bool isSignedIn;
+  const _GamesList({required this.t, required this.isSignedIn});
 
   @override
   Widget build(BuildContext context) {
@@ -176,6 +127,30 @@ class _GamesList extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.cloud_off_rounded, color: t.textDim, size: 48),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Erreur de connexion',
+                      style: TextStyle(color: t.textOnDark, fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '${snapshot.error}',
+                      style: TextStyle(color: t.textDim, fontSize: 11),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            );
           }
           final games = snapshot.data ?? [];
           if (games.isEmpty) {
@@ -188,6 +163,14 @@ class _GamesList extends StatelessWidget {
                   Text(
                     'Aucune partie en cours',
                     style: TextStyle(color: t.textDim, fontSize: 16),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    isSignedIn
+                        ? 'Lance une partie pour qu\'elle apparaisse ici'
+                        : 'Connectez-vous et lancez une partie pour la diffuser',
+                    style: TextStyle(color: t.textDim.withValues(alpha: 0.6), fontSize: 12),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),

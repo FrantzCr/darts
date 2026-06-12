@@ -13,6 +13,7 @@ import '../../../shared/widgets/pub_back_button.dart';
 import '../../../shared/widgets/pub_button.dart';
 import '../../../shared/widgets/pub_screen.dart';
 import '../../../shared/widgets/theme_toggle_fab.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../providers/game_provider.dart';
 import '../widgets/dartboard_widget.dart';
 
@@ -187,6 +188,7 @@ class _TopBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final liveCode = ref.watch(liveGameCodeProvider);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -203,10 +205,48 @@ class _TopBar extends ConsumerWidget {
             ),
           ),
           const Spacer(),
+          if (liveCode != null) ...[
+            _LiveCodeBadge(code: liveCode, t: t),
+            const SizedBox(width: 8),
+          ],
           if (game.status == GameStatus.bust)
             _StatusPill(label: l10n.bust, color: Colors.red, t: t)
           else if (game.status == GameStatus.win)
             _StatusPill(label: l10n.win, color: t.gold, t: t),
+        ],
+      ),
+    );
+  }
+}
+
+class _LiveCodeBadge extends StatelessWidget {
+  final String code;
+  final AppThemeTokens t;
+  const _LiveCodeBadge({required this.code, required this.t});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.red.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: Colors.red.withValues(alpha: 0.4), width: 1),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(width: 5, height: 5, decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle)),
+          const SizedBox(width: 4),
+          Text(
+            code,
+            style: const TextStyle(
+              color: Colors.red,
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1.5,
+            ),
+          ),
         ],
       ),
     );
