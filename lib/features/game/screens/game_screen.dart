@@ -89,26 +89,33 @@ class _PortraitLayout extends ConsumerWidget {
         _ScoreBanner(game: game, t: t),
         const SizedBox(height: 12),
         Expanded(
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTapUp: (_) {
-              if (game.turnComplete || game.status == GameStatus.win) return;
-              HapticFeedback.heavyImpact();
-              ref.read(gameProvider.notifier).recordHit(DartThrow.miss());
-            },
-            child: Center(
-              child: TappableDartboardWidget(
-                theme: t,
-                lastHitId: game.lastHitId,
-                turnDarts: game.turn,
-                size: MediaQuery.of(context).size.width * 0.9,
-                onHit: (dart) => ref.read(gameProvider.notifier).recordHit(dart),
-                onMiss: (_) {
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // Background layer: catches taps that land outside the dartboard SizedBox.
+              // Must be first (bottom of Stack) so the dartboard above absorbs its own taps first.
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTapUp: (_) {
+                  if (game.turnComplete || game.status == GameStatus.win) return;
                   HapticFeedback.heavyImpact();
                   ref.read(gameProvider.notifier).recordHit(DartThrow.miss());
                 },
               ),
-            ),
+              Center(
+                child: TappableDartboardWidget(
+                  theme: t,
+                  lastHitId: game.lastHitId,
+                  turnDarts: game.turn,
+                  size: MediaQuery.of(context).size.width * 0.9,
+                  onHit: (dart) => ref.read(gameProvider.notifier).recordHit(dart),
+                  onMiss: (_) {
+                    HapticFeedback.heavyImpact();
+                    ref.read(gameProvider.notifier).recordHit(DartThrow.miss());
+                  },
+                ),
+              ),
+            ],
           ),
         ),
         if (game.isRtc) _RtcTargetHint(game: game, t: t) else _CheckoutHint(game: game, t: t),
@@ -134,26 +141,31 @@ class _LandscapeLayout extends ConsumerWidget {
       children: [
         SizedBox(
           width: boardSize,
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTapUp: (_) {
-              if (game.turnComplete || game.status == GameStatus.win) return;
-              HapticFeedback.heavyImpact();
-              ref.read(gameProvider.notifier).recordHit(DartThrow.miss());
-            },
-            child: Center(
-              child: TappableDartboardWidget(
-                theme: t,
-                lastHitId: game.lastHitId,
-                turnDarts: game.turn,
-                size: boardSize,
-                onHit: (dart) => ref.read(gameProvider.notifier).recordHit(dart),
-                onMiss: (_) {
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTapUp: (_) {
+                  if (game.turnComplete || game.status == GameStatus.win) return;
                   HapticFeedback.heavyImpact();
                   ref.read(gameProvider.notifier).recordHit(DartThrow.miss());
                 },
               ),
-            ),
+              Center(
+                child: TappableDartboardWidget(
+                  theme: t,
+                  lastHitId: game.lastHitId,
+                  turnDarts: game.turn,
+                  size: boardSize,
+                  onHit: (dart) => ref.read(gameProvider.notifier).recordHit(dart),
+                  onMiss: (_) {
+                    HapticFeedback.heavyImpact();
+                    ref.read(gameProvider.notifier).recordHit(DartThrow.miss());
+                  },
+                ),
+              ),
+            ],
           ),
         ),
         Expanded(
