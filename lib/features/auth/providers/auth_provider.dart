@@ -8,8 +8,8 @@ final authUserProvider = StreamProvider<User?>((ref) {
 final liveGameCodeProvider = StateProvider<String?>((ref) => null);
 
 Future<void> signInWithGoogle() async {
-  final provider = GoogleAuthProvider();
-  await FirebaseAuth.instance.signInWithPopup(provider);
+  // signInWithRedirect avoids COOP header issues on GitHub Pages
+  await FirebaseAuth.instance.signInWithRedirect(GoogleAuthProvider());
 }
 
 Future<void> signOut() async {

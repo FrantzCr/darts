@@ -84,6 +84,41 @@ class Player extends HiveObject {
 
   double get doubleRate => doubleAttempts == 0 ? 0 : doubleHits / doubleAttempts;
 
+  Map<String, dynamic> toFirestore() => {
+    'name': name,
+    'colorHex': colorHex,
+    'hand': hand,
+    'totalGames': totalGames,
+    'totalWins': totalWins,
+    'totalDarts': totalDarts,
+    'totalPoints': totalPoints,
+    'bestTurn': bestTurn,
+    'scores100plus': scores100plus,
+    'tons180': tons180,
+    'doubleAttempts': doubleAttempts,
+    'doubleHits': doubleHits,
+    'currentStreak': currentStreak,
+    'bestStreak': bestStreak,
+  };
+
+  static Player fromFirestore(String id, Map<String, dynamic> d) => Player(
+    id: id,
+    name: d['name'] as String,
+    colorHex: d['colorHex'] as String,
+    hand: d['hand'] as String? ?? 'right',
+    totalGames: (d['totalGames'] as num?)?.toInt() ?? 0,
+    totalWins: (d['totalWins'] as num?)?.toInt() ?? 0,
+    totalDarts: (d['totalDarts'] as num?)?.toInt() ?? 0,
+    totalPoints: (d['totalPoints'] as num?)?.toInt() ?? 0,
+    bestTurn: (d['bestTurn'] as num?)?.toInt() ?? 0,
+    scores100plus: (d['scores100plus'] as num?)?.toInt() ?? 0,
+    tons180: (d['tons180'] as num?)?.toInt() ?? 0,
+    doubleAttempts: (d['doubleAttempts'] as num?)?.toInt() ?? 0,
+    doubleHits: (d['doubleHits'] as num?)?.toInt() ?? 0,
+    currentStreak: (d['currentStreak'] as num?)?.toInt() ?? 0,
+    bestStreak: (d['bestStreak'] as num?)?.toInt() ?? 0,
+  );
+
   Player copyWith({
     String? name,
     String? colorHex,

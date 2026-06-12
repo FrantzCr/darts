@@ -29,12 +29,8 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
 
   Future<void> _handleGoogleSignIn() async {
     setState(() { _loading = true; _error = null; });
-    try {
-      await signInWithGoogle();
-      if (mounted) context.go('/');
-    } catch (e) {
-      setState(() { _loading = false; _error = 'Connexion annulée ou impossible.'; });
-    }
+    // signInWithRedirect navigates the page to Google — no await needed
+    signInWithGoogle();
   }
 
   @override

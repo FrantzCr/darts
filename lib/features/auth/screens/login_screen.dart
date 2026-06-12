@@ -19,12 +19,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _handleGoogleSignIn() async {
     setState(() { _loading = true; _error = null; });
-    try {
-      await signInWithGoogle();
-      if (mounted) context.go('/');
-    } catch (e) {
-      setState(() { _loading = false; _error = 'Connexion annulée ou impossible.'; });
-    }
+    signInWithGoogle();
   }
 
   @override

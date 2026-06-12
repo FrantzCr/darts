@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 part 'game_session.g.dart';
@@ -46,6 +47,51 @@ class GameSession extends HiveObject {
     this.winnerLastDart,
     this.winnerDartsThrown = 0,
   });
+
+  Map<String, dynamic> toFirestore() => {
+    'playedAt': Timestamp.fromDate(playedAt),
+    'playerIds': playerIds,
+    'winnerId': winnerId,
+    'rounds': rounds,
+    'durationSeconds': durationSeconds,
+    'startScore': startScore,
+    'winnerLastDart': winnerLastDart,
+    'winnerDartsThrown': winnerDartsThrown,
+    'turns': turns.map((t) => {
+      'playerId': t.playerId,
+      'roundNumber': t.roundNumber,
+      'dartLabels': t.dartLabels,
+      'total': t.total,
+      'remaining': t.remaining,
+      'bust': t.bust,
+    }).toList(),
+  };
+
+  static GameSession fromFirestore(String id, Map<String, dynamic> d) {
+    final turns = (d['turns'] as List? ?? []).map((t) {
+      final m = t as Map<String, dynamic>;
+      return TurnRecord(
+        playerId: m['playerId'] as String,
+        roundNumber: (m['roundNumber'] as num).toInt(),
+        dartLabels: (m['dartLabels'] as List).cast<String>(),
+        total: (m['total'] as num).toInt(),
+        remaining: (m['remaining'] as num).toInt(),
+        bust: m['bust'] as bool? ?? false,
+      );
+    }).toList();
+    return GameSession(
+      id: id,
+      playedAt: (d['playedAt'] as Timestamp).toDate(),
+      playerIds: (d['playerIds'] as List).cast<String>(),
+      winnerId: d['winnerId'] as String?,
+      rounds: (d['rounds'] as num).toInt(),
+      durationSeconds: (d['durationSeconds'] as num).toInt(),
+      turns: turns,
+      startScore: (d['startScore'] as num?)?.toInt() ?? 301,
+      winnerLastDart: d['winnerLastDart'] as String?,
+      winnerDartsThrown: (d['winnerDartsThrown'] as num?)?.toInt() ?? 0,
+    );
+  }
 }
 
 @HiveType(typeId: 2)
