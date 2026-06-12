@@ -38,6 +38,31 @@ class ActiveGamesScreen extends ConsumerWidget {
                     ),
                   ),
                   const Spacer(),
+                  // Auth status indicator
+                  authUser.when(
+                    data: (user) => user != null
+                        ? Tooltip(
+                            message: user.displayName ?? user.email ?? '',
+                            child: CircleAvatar(
+                              radius: 14,
+                              backgroundImage: user.photoURL != null ? NetworkImage(user.photoURL!) : null,
+                              backgroundColor: t.accent.withValues(alpha: 0.2),
+                              child: user.photoURL == null
+                                  ? Text(
+                                      (user.displayName ?? user.email ?? '?')[0].toUpperCase(),
+                                      style: TextStyle(color: t.accent, fontSize: 11, fontWeight: FontWeight.w700),
+                                    )
+                                  : null,
+                            ),
+                          )
+                        : Tooltip(
+                            message: 'Non connecté — les parties ne seront pas diffusées',
+                            child: Icon(Icons.person_off_outlined, color: t.textDim, size: 20),
+                          ),
+                    loading: () => const SizedBox(width: 20),
+                    error: (_, __) => const SizedBox.shrink(),
+                  ),
+                  const SizedBox(width: 10),
                   GestureDetector(
                     onTap: () => _showJoinByCode(context, t),
                     child: Container(
