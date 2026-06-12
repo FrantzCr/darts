@@ -11,10 +11,12 @@ import '../../features/settings/screens/settings_screen.dart';
 import '../../features/spectator/screens/active_games_screen.dart';
 import '../../features/spectator/screens/spectator_screen.dart';
 import '../../features/stats/screens/stats_screen.dart';
+import '../../features/welcome/screens/welcome_screen.dart';
 
 final appRouter = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/welcome',
   routes: [
+    GoRoute(path: '/welcome', builder: (_, __) => const WelcomeScreen()),
     GoRoute(path: '/', builder: (_, __) => const HomeScreen()),
     GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
     GoRoute(path: '/new-game', builder: (_, __) => const NewGameScreen()),
