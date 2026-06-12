@@ -8,8 +8,12 @@ import '../../../core/models/game_session.dart';
 import '../../../core/models/player.dart';
 import '../../../core/services/firestore_game_service.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../gages/providers/gage_provider.dart';
 import '../../history/providers/history_provider.dart';
 import '../../profile/providers/player_provider.dart';
+
+/// Set to true when a "Hors" miss triggers the spin wheel.
+final wheelTriggerProvider = StateProvider<bool>((ref) => false);
 
 class GameNotifier extends Notifier<ActiveGameState?> {
   String? _firestoreGameId;
@@ -69,6 +73,13 @@ class GameNotifier extends Notifier<ActiveGameState?> {
       status: GameStatus.playing,
     );
     _pushToFirestore();
+
+    if (dart.id == 'miss') {
+      final gSettings = ref.read(gageProvider);
+      if (gSettings.enabled && gSettings.activeGages.isNotEmpty) {
+        ref.read(wheelTriggerProvider.notifier).state = true;
+      }
+    }
 
     Future.delayed(const Duration(milliseconds: 420), () {
       if (state?.lastHitId == dart.id) {
@@ -318,6 +329,7 @@ class GameNotifier extends Notifier<ActiveGameState?> {
   void reset() {
     _firestoreGameId = null;
     ref.read(liveGameCodeProvider.notifier).state = null;
+    ref.read(wheelTriggerProvider.notifier).state = false;
     state = null;
   }
 }

@@ -125,5 +125,19 @@
     }
   },
   "rematchOrderTitle": "Player order",
-  "dragToReorder": "Drag to reorder"
+  "dragToReorder": "Drag to reorder",
+  "gagesSection": "Forfeits",
+  "wheelEnabled": "Forfeit wheel",
+  "wheelMode": "Mode",
+  "wheelModeFamily": "All ages",
+  "wheelModeAdult": "18+",
+  "manageGages": "Manage forfeits",
+  "addGage": "Add forfeit",
+  "editGage": "Edit forfeit",
+  "gageHint": "Describe the forfeit…",
+  "adultGage": "18+ forfeit",
+  "noGagesConfigured": "No forfeits — tap + to add some",
+  "spinInstruction": "Swipe to spin",
+  "yourForfeit": "Your forfeit!",
+  "continueGame": "Let's go!"
 }

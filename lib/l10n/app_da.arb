@@ -125,5 +125,19 @@
     }
   },
   "rematchOrderTitle": "Spillerrækkefølge",
-  "dragToReorder": "Træk for at omplacere"
+  "dragToReorder": "Træk for at omplacere",
+  "gagesSection": "Bøder",
+  "wheelEnabled": "Hjul med bøder",
+  "wheelMode": "Tilstand",
+  "wheelModeFamily": "Alle aldre",
+  "wheelModeAdult": "18+",
+  "manageGages": "Administrer bøder",
+  "addGage": "Tilføj bøde",
+  "editGage": "Rediger bøde",
+  "gageHint": "Beskriv bøden…",
+  "adultGage": "18+ bøde",
+  "noGagesConfigured": "Ingen bøder — tryk + for at tilføje",
+  "spinInstruction": "Stryg for at dreje",
+  "yourForfeit": "Din bøde!",
+  "continueGame": "Afsted!"
 }

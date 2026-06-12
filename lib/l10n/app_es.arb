@@ -125,5 +125,19 @@
     }
   },
   "rematchOrderTitle": "Orden de juego",
-  "dragToReorder": "Arrastra para reordenar"
+  "dragToReorder": "Arrastra para reordenar",
+  "gagesSection": "Forfaits",
+  "wheelEnabled": "Ruleta de forfaits",
+  "wheelMode": "Modo",
+  "wheelModeFamily": "Todos",
+  "wheelModeAdult": "−18",
+  "manageGages": "Gestionar forfaits",
+  "addGage": "Añadir forfait",
+  "editGage": "Editar forfait",
+  "gageHint": "Describe el forfait…",
+  "adultGage": "Forfait −18",
+  "noGagesConfigured": "Sin forfaits — pulsa + para añadir",
+  "spinInstruction": "Desliza para girar",
+  "yourForfeit": "¡Tu forfait!",
+  "continueGame": "¡Vamos!"
 }

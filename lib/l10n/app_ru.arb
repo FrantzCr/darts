@@ -125,5 +125,19 @@
     }
   },
   "rematchOrderTitle": "Порядок игроков",
-  "dragToReorder": "Перетащите для сортировки"
+  "dragToReorder": "Перетащите для сортировки",
+  "gagesSection": "Фанты",
+  "wheelEnabled": "Колесо фантов",
+  "wheelMode": "Режим",
+  "wheelModeFamily": "Все возрасты",
+  "wheelModeAdult": "18+",
+  "manageGages": "Управление фантами",
+  "addGage": "Добавить фант",
+  "editGage": "Изменить фант",
+  "gageHint": "Опишите фант…",
+  "adultGage": "Фант 18+",
+  "noGagesConfigured": "Нет фантов — нажмите + чтобы добавить",
+  "spinInstruction": "Проведите для вращения",
+  "yourForfeit": "Твой фант!",
+  "continueGame": "Вперёд!"
 }

@@ -15,6 +15,8 @@ import '../../../shared/widgets/pub_button.dart';
 import '../../../shared/widgets/pub_screen.dart';
 import '../../../shared/widgets/theme_toggle_fab.dart';
 import '../../auth/providers/auth_provider.dart';
+import '../../gages/providers/gage_provider.dart';
+import '../../gages/widgets/spin_wheel_overlay.dart';
 import '../providers/game_provider.dart';
 import '../widgets/dartboard_widget.dart';
 
@@ -26,6 +28,8 @@ class GameScreen extends ConsumerWidget {
     final game = ref.watch(gameProvider);
     final t = ref.watch(activeThemeTokensProvider);
     final l10n = AppLocalizations.of(context);
+    final showWheel = ref.watch(wheelTriggerProvider);
+    final gageSettings = ref.watch(gageProvider);
 
     if (game == null) {
       return PubScreen(
@@ -57,6 +61,13 @@ class GameScreen extends ConsumerWidget {
               child: Container(color: Colors.red.withValues(alpha: 0.18)),
             ),
           ),
+          if (showWheel && gageSettings.activeGages.isNotEmpty)
+            Positioned.fill(
+              child: SpinWheelOverlay(
+                gages: gageSettings.activeGages,
+                onDismiss: () => ref.read(wheelTriggerProvider.notifier).state = false,
+              ),
+            ),
         ],
       ),
     );

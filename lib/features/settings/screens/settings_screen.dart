@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/themes/theme_provider.dart';
 import '../../../core/themes/theme_tokens.dart';
 import '../../../features/auth/providers/auth_provider.dart';
+import '../../../features/gages/providers/gage_provider.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/pub_back_button.dart';
 import '../../../shared/widgets/pub_card.dart';
@@ -102,6 +103,10 @@ class SettingsScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 28),
+                  _SectionLabel(label: l10n.gagesSection, t: t),
+                  const SizedBox(height: 8),
+                  _GagesCard(t: t),
                   const SizedBox(height: 28),
                   _SectionLabel(label: 'Apparence', t: t),
                   const SizedBox(height: 8),
@@ -227,6 +232,139 @@ class _AccountRow extends ConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _GagesCard extends ConsumerWidget {
+  final AppThemeTokens t;
+  const _GagesCard({required this.t});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final settings = ref.watch(gageProvider);
+    final notifier = ref.read(gageProvider.notifier);
+
+    return PubCard(
+      theme: t,
+      padding: EdgeInsets.zero,
+      child: Column(
+        children: [
+          // Toggle row
+          GestureDetector(
+            onTap: () => notifier.setEnabled(!settings.enabled),
+            child: Container(
+              color: Colors.transparent,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              child: Row(
+                children: [
+                  Icon(Icons.casino_outlined, color: t.accent, size: 22),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Text(
+                      l10n.wheelEnabled,
+                      style: TextStyle(color: t.text, fontSize: 15, fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  Switch(
+                    value: settings.enabled,
+                    onChanged: notifier.setEnabled,
+                    activeColor: t.accent,
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          if (settings.enabled) ...[
+            Divider(height: 1, color: t.surfaceBorder.withValues(alpha: 0.5)),
+
+            // Mode selector
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                children: [
+                  Text(l10n.wheelMode, style: TextStyle(color: t.textDim, fontSize: 13)),
+                  const SizedBox(width: 12),
+                  _ModeChip(
+                    label: l10n.wheelModeFamily,
+                    selected: !settings.adultMode,
+                    t: t,
+                    onTap: () => notifier.setAdultMode(false),
+                  ),
+                  const SizedBox(width: 8),
+                  _ModeChip(
+                    label: l10n.wheelModeAdult,
+                    selected: settings.adultMode,
+                    t: t,
+                    color: Colors.red,
+                    onTap: () => notifier.setAdultMode(true),
+                  ),
+                ],
+              ),
+            ),
+
+            Divider(height: 1, color: t.surfaceBorder.withValues(alpha: 0.5)),
+
+            // Manage gages link
+            GestureDetector(
+              onTap: () => context.push('/gages'),
+              child: Container(
+                color: Colors.transparent,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                child: Row(
+                  children: [
+                    Icon(Icons.list_alt_rounded, color: t.textDim, size: 20),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Text(
+                        l10n.manageGages,
+                        style: TextStyle(color: t.text, fontSize: 15),
+                      ),
+                    ),
+                    Icon(Icons.chevron_right_rounded, color: t.textDim, size: 20),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _ModeChip extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final AppThemeTokens t;
+  final Color? color;
+  final VoidCallback onTap;
+  const _ModeChip({required this.label, required this.selected, required this.t, this.color, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final c = color ?? t.accent;
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          color: selected ? c.withValues(alpha: 0.15) : Colors.transparent,
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: selected ? c : t.surfaceBorder, width: 1.5),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: selected ? c : t.textDim,
+            fontSize: 13,
+            fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
+          ),
+        ),
+      ),
     );
   }
 }
