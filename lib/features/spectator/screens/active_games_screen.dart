@@ -26,7 +26,7 @@ class ActiveGamesScreen extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
-                  PubBackButton(t: t, onTap: () => context.go('/')),
+                  PubBackButton(t: t, onTap: () => context.canPop() ? context.pop() : context.go('/')),
                   const SizedBox(width: 12),
                   Text(
                     'Parties en cours',
@@ -68,13 +68,13 @@ class ActiveGamesScreen extends ConsumerWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
                       decoration: BoxDecoration(
-                        color: t.accent.withValues(alpha: 0.15),
+                        color: Colors.deepOrange.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(t.shape.buttonRadius),
-                        border: Border.all(color: t.accent.withValues(alpha: 0.4), width: 1),
+                        border: Border.all(color: Colors.deepOrange.withValues(alpha: 0.4), width: 1),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Code',
-                        style: TextStyle(color: t.accent, fontSize: 13, fontWeight: FontWeight.w600),
+                        style: TextStyle(color: Colors.deepOrange, fontSize: 13, fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),

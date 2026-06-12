@@ -93,7 +93,7 @@ class _TopBar extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
       child: Row(
         children: [
-          PubBackButton(t: t, onTap: () => context.go('/')),
+          PubBackButton(t: t, onTap: () => context.canPop() ? context.pop() : context.go('/')),
           const SizedBox(width: 12),
           Text(l10n.stats, style: TextStyle(color: t.textOnDark, fontSize: 20, fontWeight: FontWeight.w700, fontFamily: t.displayFont)),
         ],

@@ -127,10 +127,10 @@ class _Features extends StatelessWidget {
             icon: Icons.bar_chart_rounded,
             label: 'Stats',
             t: t,
-            onTap: () => context.go('/stats'),
+            onTap: () => context.push('/stats'),
           ),
           const SizedBox(width: 10),
-          _LiveChip(t: t, onTap: () => context.go('/live')),
+          _LiveChip(t: t, onTap: () => context.push('/live')),
         ],
       ),
     );
@@ -189,27 +189,32 @@ class _LiveChip extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
-            color: Colors.red.withValues(alpha: 0.08),
+            color: Colors.deepOrange.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(t.shape.cardRadius),
-            border: Border.all(color: Colors.red.withValues(alpha: 0.25)),
+            border: Border.all(color: Colors.deepOrange.withValues(alpha: 0.25)),
           ),
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 6, height: 6,
-                    decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
+              SizedBox(
+                height: 22,
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 6, height: 6,
+                        decoration: const BoxDecoration(color: Colors.deepOrange, shape: BoxShape.circle),
+                      ),
+                      const SizedBox(width: 4),
+                      const Text('LIVE', style: TextStyle(color: Colors.deepOrange, fontSize: 11, fontWeight: FontWeight.w800)),
+                    ],
                   ),
-                  const SizedBox(width: 4),
-                  const Text('LIVE', style: TextStyle(color: Colors.red, fontSize: 11, fontWeight: FontWeight.w800)),
-                ],
+                ),
               ),
               const SizedBox(height: 6),
               Text(
                 'Spectateur',
-                style: TextStyle(color: Colors.red.withValues(alpha: 0.7), fontSize: 11, fontWeight: FontWeight.w600),
+                style: TextStyle(color: Colors.deepOrange.withValues(alpha: 0.7), fontSize: 11, fontWeight: FontWeight.w600),
               ),
             ],
           ),
