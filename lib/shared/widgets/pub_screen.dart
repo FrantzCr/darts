@@ -27,7 +27,13 @@ class PubScreen extends StatelessWidget {
             Positioned.fill(child: IgnorePointer(child: _DiagonalTexture(color: theme.surfaceBorder))),
           if (theme.shape.texture == 'grid')
             Positioned.fill(child: IgnorePointer(child: _GridTexture(color: theme.surfaceBorder))),
-          child,
+          Align(
+            alignment: Alignment.topCenter,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 540),
+              child: SizedBox(width: double.infinity, height: double.infinity, child: child),
+            ),
+          ),
         ],
       ),
     );

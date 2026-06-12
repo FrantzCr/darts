@@ -67,7 +67,7 @@ class _DartsAppState extends ConsumerState<DartsApp> {
     final locale = ref.watch(localeProvider);
 
     return MaterialApp.router(
-      title: 'Fléchettes',
+      title: 'Darts Friends',
       debugShowCheckedModeBanner: false,
       theme: theme,
       routerConfig: appRouter,

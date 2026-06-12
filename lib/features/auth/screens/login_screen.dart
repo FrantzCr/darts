@@ -91,28 +91,27 @@ class _GoogleButton extends StatelessWidget {
     return GestureDetector(
       onTap: loading ? null : onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: t.surface.withValues(alpha: 0.18),
           borderRadius: BorderRadius.circular(t.shape.buttonRadius),
-          boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.18), blurRadius: 10, offset: const Offset(0, 3)),
-          ],
+          border: Border.all(color: t.surfaceBorder.withValues(alpha: 0.5), width: 1),
         ),
         child: Row(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (loading)
-              const SizedBox(
-                width: 20, height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.grey),
+              SizedBox(
+                width: 18, height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2, color: t.textOnDark.withValues(alpha: 0.6)),
               )
             else
               _GoogleG(),
             const SizedBox(width: 12),
             Text(
               'Se connecter avec Google',
-              style: TextStyle(color: Colors.grey[800], fontSize: 15, fontWeight: FontWeight.w600),
+              style: TextStyle(color: t.textOnDark, fontSize: 15, fontWeight: FontWeight.w600),
             ),
           ],
         ),
