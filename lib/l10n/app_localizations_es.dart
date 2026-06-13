@@ -395,4 +395,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get defaultUsername => 'Usuario';
+
+  @override
+  String get finishOnDouble => 'Terminar en un doble';
 }

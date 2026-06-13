@@ -168,7 +168,7 @@ class _LiveCTA extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Text(
-              'Parties en cours',
+              AppLocalizations.of(context).activeGamesTitle,
               style: TextStyle(color: t.textOnDark, fontSize: 15, fontWeight: FontWeight.w600),
             ),
             const Spacer(),

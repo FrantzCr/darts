@@ -145,5 +145,6 @@
   "appearanceSection": "Udseende",
   "signInWithGoogle": "Log ind med Google",
   "signOut": "Log ud",
-  "defaultUsername": "Bruger"
+  "defaultUsername": "Bruger",
+  "finishOnDouble": "Afslut på en dobbelt"
 }

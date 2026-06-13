@@ -859,6 +859,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Utilisateur'**
   String get defaultUsername;
+
+  /// No description provided for @finishOnDouble.
+  ///
+  /// In fr, this message translates to:
+  /// **'Finir sur un double'**
+  String get finishOnDouble;
 }
 
 class _AppLocalizationsDelegate

@@ -145,5 +145,6 @@
   "appearanceSection": "Apariencia",
   "signInWithGoogle": "Iniciar sesión con Google",
   "signOut": "Cerrar sesión",
-  "defaultUsername": "Usuario"
+  "defaultUsername": "Usuario",
+  "finishOnDouble": "Terminar en un doble"
 }

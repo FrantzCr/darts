@@ -393,4 +393,7 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get defaultUsername => 'Bruger';
+
+  @override
+  String get finishOnDouble => 'Afslut på en dobbelt';
 }

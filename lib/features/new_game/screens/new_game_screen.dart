@@ -68,6 +68,32 @@ class _NewGameScreenState extends ConsumerState<NewGameScreen> {
     });
   }
 
+  void _confirmDelete(BuildContext context, Player player, AppThemeTokens t) {
+    final l10n = AppLocalizations.of(context);
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: t.surface,
+        title: Text('${l10n.delete} ${player.name} ?', style: TextStyle(color: t.text)),
+        content: Text(l10n.irreversibleAction, style: TextStyle(color: t.textDim)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel, style: TextStyle(color: t.textDim)),
+          ),
+          TextButton(
+            onPressed: () {
+              ref.read(playerProvider.notifier).deletePlayer(player.id);
+              setState(() => _selected.removeWhere((s) => s.id == player.id));
+              Navigator.pop(context);
+            },
+            child: Text(l10n.delete, style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _startGame() {
     if (_selected.length < 2) return;
     ref.read(gameProvider.notifier).startGame(_selected, startScore: _startScore, gameMode: _gameMode, doubleOut: _doubleOut);
@@ -132,6 +158,7 @@ class _NewGameScreenState extends ConsumerState<NewGameScreen> {
                         onSelect: (p) => setState(() {
                           if (_selected.length < 8) _selected.add(p);
                         }),
+                        onDelete: (p) => _confirmDelete(context, p, t),
                         onShowCreate: () => setState(() => _showCreate = true),
                       ),
                     const SizedBox(height: 40),
@@ -236,9 +263,9 @@ class _ModeSection extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 10),
-                Text('Finir sur un double', style: TextStyle(color: t.textOnDark.withValues(alpha: 0.85), fontSize: 14)),
+                Text(l10n.finishOnDouble, style: TextStyle(color: t.textOnDark.withValues(alpha: 0.85), fontSize: 14)),
                 const SizedBox(width: 6),
-                Text('(double-out)', style: TextStyle(color: t.textDim, fontSize: 12)),
+                Text('(${l10n.doubleOut})', style: TextStyle(color: t.textDim, fontSize: 12)),
               ],
             ),
           ),
@@ -367,8 +394,9 @@ class _PlayerList extends StatelessWidget {
   final List<Player> players;
   final AppThemeTokens t;
   final ValueChanged<Player> onSelect;
+  final ValueChanged<Player> onDelete;
   final VoidCallback onShowCreate;
-  const _PlayerList({required this.players, required this.t, required this.onSelect, required this.onShowCreate});
+  const _PlayerList({required this.players, required this.t, required this.onSelect, required this.onDelete, required this.onShowCreate});
 
   @override
   Widget build(BuildContext context) {
@@ -377,6 +405,7 @@ class _PlayerList extends StatelessWidget {
       children: [
         ...players.map((p) => GestureDetector(
           onTap: () => onSelect(p),
+          onLongPress: () => onDelete(p),
           child: Container(
             margin: const EdgeInsets.only(bottom: 8),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

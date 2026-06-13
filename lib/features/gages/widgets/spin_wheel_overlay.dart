@@ -145,8 +145,7 @@ class _SpinWheelOverlayState extends ConsumerState<SpinWheelOverlay>
                           onDismiss: widget.onDismiss,
                         ),
                       )
-                    : SizedBox(
-                        height: 130,
+                    : Expanded(
                         child: _LegendGrid(
                           gages: widget.gages,
                           spinning: isSpinning,
@@ -256,7 +255,7 @@ class _LegendGrid extends StatelessWidget {
         crossAxisSpacing: 6,
         mainAxisSpacing: 4,
       ),
-      itemCount: gages.length,
+      itemCount: min(gages.length, 20),
       itemBuilder: (context, i) {
         final gage = gages[i];
         final dotColor = i % 2 == 0 ? _kDartRed : _kDartGreen;
@@ -401,8 +400,8 @@ class _DartboardWheelPainter extends CustomPainter {
     }
 
     // 5. Emoji in body (scaled to fit segment)
-    final emojiFontSize = (bodyR * pi / (n * 1.8)).clamp(10.0, 26.0);
-    final emojiR = bodyR * 0.52;
+    final emojiFontSize = (bodyR * pi / (n * 1.8)).clamp(10.0, 32.0);
+    final emojiR = bodyR * 0.68;
     for (int i = 0; i < n; i++) {
       final mid = startOff + i * segRad + segRad / 2;
       final pos = Offset(cos(mid) * emojiR, sin(mid) * emojiR);
@@ -444,12 +443,12 @@ class _DartboardWheelPainter extends CustomPainter {
         ..strokeWidth = 3,
     );
 
-    // Pointer triangle (fixed, points down into wheel at top)
-    final tipY = center.dy - outerR - 1;
-    final baseY = center.dy - outerR + 18;
+    // Pointer triangle (fixed, tip points INTO wheel from top, base floats above rim)
+    final tipY = center.dy - outerR + 14;
+    final baseY = center.dy - outerR - 14;
     final ptr = Path()
-      ..moveTo(center.dx - 11, baseY)
-      ..lineTo(center.dx + 11, baseY)
+      ..moveTo(center.dx - 13, baseY)
+      ..lineTo(center.dx + 13, baseY)
       ..lineTo(center.dx, tipY)
       ..close();
     canvas.drawPath(ptr, Paint()..color = Colors.white);

@@ -393,4 +393,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get defaultUsername => 'Пользователь';
+
+  @override
+  String get finishOnDouble => 'Финиш с дублем';
 }

@@ -145,5 +145,6 @@
   "appearanceSection": "Внешний вид",
   "signInWithGoogle": "Войти через Google",
   "signOut": "Выйти",
-  "defaultUsername": "Пользователь"
+  "defaultUsername": "Пользователь",
+  "finishOnDouble": "Финиш с дублем"
 }
