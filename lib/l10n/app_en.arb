@@ -139,5 +139,11 @@
   "noGagesConfigured": "No forfeits — tap + to add some",
   "spinInstruction": "Swipe to spin",
   "yourForfeit": "Your forfeit!",
-  "continueGame": "Let's go!"
+  "continueGame": "Let's go!",
+  "accountSection": "Account",
+  "languageSection": "Language",
+  "appearanceSection": "Appearance",
+  "signInWithGoogle": "Sign in with Google",
+  "signOut": "Sign out",
+  "defaultUsername": "User"
 }

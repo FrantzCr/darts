@@ -250,6 +250,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get colorPicker => 'Couleur';
 
   @override
+  String get initials => 'Initiales';
+
+  @override
   String get hand => 'Main';
 
   @override
@@ -290,4 +293,107 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get currentStreakTooltip => 'Victoires consécutives';
+
+  @override
+  String get activeGamesTitle => 'Parties en cours';
+
+  @override
+  String get notSignedInBroadcast =>
+      'Non connecté — les parties ne seront pas diffusées';
+
+  @override
+  String get joinByCode => 'Rejoindre avec un code';
+
+  @override
+  String get codeBtnLabel => 'Code';
+
+  @override
+  String codeNotFound(String code) {
+    return 'Code introuvable : $code';
+  }
+
+  @override
+  String get join => 'Rejoindre';
+
+  @override
+  String get connectionError => 'Erreur de connexion';
+
+  @override
+  String get startGameToAppear =>
+      'Lance une partie pour qu\'elle apparaisse ici';
+
+  @override
+  String get signInToStream =>
+      'Connectez-vous et lancez une partie pour la diffuser';
+
+  @override
+  String byHost(String host) {
+    return 'Par $host';
+  }
+
+  @override
+  String get rematchOrderTitle => 'Ordre de jeu';
+
+  @override
+  String get dragToReorder => 'Faites glisser pour réorganiser';
+
+  @override
+  String get gagesSection => 'Gages';
+
+  @override
+  String get wheelEnabled => 'Roue des gages';
+
+  @override
+  String get wheelMode => 'Mode';
+
+  @override
+  String get wheelModeFamily => 'Tout public';
+
+  @override
+  String get wheelModeAdult => '18+';
+
+  @override
+  String get manageGages => 'Gérer les gages';
+
+  @override
+  String get addGage => 'Ajouter un gage';
+
+  @override
+  String get editGage => 'Modifier le gage';
+
+  @override
+  String get gageHint => 'Décris le gage…';
+
+  @override
+  String get adultGage => 'Gage 18+';
+
+  @override
+  String get noGagesConfigured => 'Aucun gage — appuyez sur + pour en ajouter';
+
+  @override
+  String get spinInstruction => 'Glisse pour faire tourner';
+
+  @override
+  String get yourForfeit => 'Ton gage !';
+
+  @override
+  String get continueGame => 'C\'est parti !';
+
+  @override
+  String get accountSection => 'Compte';
+
+  @override
+  String get languageSection => 'Langue';
+
+  @override
+  String get appearanceSection => 'Apparence';
+
+  @override
+  String get signInWithGoogle => 'Se connecter avec Google';
+
+  @override
+  String get signOut => 'Se déconnecter';
+
+  @override
+  String get defaultUsername => 'Utilisateur';
 }

@@ -36,6 +36,8 @@ class ActiveGameState {
   final Map<String, int> doubleHitsByPlayer;
   final int startScore;
   final GameMode gameMode;
+  final bool pendingGageSpin;
+  final bool doubleOut;
 
   const ActiveGameState({
     required this.players,
@@ -50,6 +52,8 @@ class ActiveGameState {
     this.doubleHitsByPlayer = const {},
     this.startScore = 301,
     this.gameMode = GameMode.classic,
+    this.pendingGageSpin = false,
+    this.doubleOut = false,
   });
 
   ActivePlayer get me => players[activeIndex];
@@ -81,6 +85,8 @@ class ActiveGameState {
     List<TurnRecord>? completedTurns,
     Map<String, int>? doubleAttemptsByPlayer,
     Map<String, int>? doubleHitsByPlayer,
+    bool? pendingGageSpin,
+    bool? doubleOut,
   }) => ActiveGameState(
     players: players ?? this.players,
     activeIndex: activeIndex ?? this.activeIndex,
@@ -94,5 +100,7 @@ class ActiveGameState {
     doubleHitsByPlayer: doubleHitsByPlayer ?? this.doubleHitsByPlayer,
     startScore: startScore,
     gameMode: gameMode,
+    pendingGageSpin: pendingGageSpin ?? this.pendingGageSpin,
+    doubleOut: doubleOut ?? this.doubleOut,
   );
 }

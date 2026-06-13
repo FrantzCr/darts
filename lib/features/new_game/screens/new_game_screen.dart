@@ -35,6 +35,7 @@ class _NewGameScreenState extends ConsumerState<NewGameScreen> {
   String _pickedHand = 'right';
   int _startScore = 301;
   GameMode _gameMode = GameMode.classic;
+  bool _doubleOut = false;
 
   @override
   void dispose() {
@@ -69,7 +70,7 @@ class _NewGameScreenState extends ConsumerState<NewGameScreen> {
 
   void _startGame() {
     if (_selected.length < 2) return;
-    ref.read(gameProvider.notifier).startGame(_selected, startScore: _startScore, gameMode: _gameMode);
+    ref.read(gameProvider.notifier).startGame(_selected, startScore: _startScore, gameMode: _gameMode, doubleOut: _doubleOut);
     context.go('/game');
   }
 
@@ -102,8 +103,10 @@ class _NewGameScreenState extends ConsumerState<NewGameScreen> {
                       t: t,
                       selectedScore: _startScore,
                       gameMode: _gameMode,
+                      doubleOut: _doubleOut,
                       onSelectScore: (v) => setState(() { _startScore = v; _gameMode = GameMode.classic; }),
                       onSelectRtc: () => setState(() => _gameMode = GameMode.rtc),
+                      onToggleDoubleOut: (v) => setState(() => _doubleOut = v),
                     ),
                     const SizedBox(height: 24),
                     _SelectedPlayers(selected: _selected, t: t, onRemove: (p) => setState(() => _selected.remove(p))),
@@ -178,27 +181,68 @@ class _ModeSection extends StatelessWidget {
   final AppThemeTokens t;
   final int selectedScore;
   final GameMode gameMode;
+  final bool doubleOut;
   final ValueChanged<int> onSelectScore;
   final VoidCallback onSelectRtc;
+  final ValueChanged<bool> onToggleDoubleOut;
   const _ModeSection({
     required this.t,
     required this.selectedScore,
     required this.gameMode,
+    required this.doubleOut,
     required this.onSelectScore,
     required this.onSelectRtc,
+    required this.onToggleDoubleOut,
   });
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+    final isClassic = gameMode == GameMode.classic;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _ModeChip(label: l10n.mode301, active: gameMode == GameMode.classic && selectedScore == 301, t: t, onTap: () => onSelectScore(301)),
-        _ModeChip(label: l10n.mode501, active: gameMode == GameMode.classic && selectedScore == 501, t: t, onTap: () => onSelectScore(501)),
-        _ModeChip(label: 'Clock', active: gameMode == GameMode.rtc, t: t, onTap: onSelectRtc),
-        _ModeChip(label: l10n.modeCricket, active: false, locked: true, t: t),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            _ModeChip(label: l10n.mode301, active: isClassic && selectedScore == 301, t: t, onTap: () => onSelectScore(301)),
+            _ModeChip(label: l10n.mode501, active: isClassic && selectedScore == 501, t: t, onTap: () => onSelectScore(501)),
+            _ModeChip(label: 'Clock', active: gameMode == GameMode.rtc, t: t, onTap: onSelectRtc),
+            _ModeChip(label: l10n.modeCricket, active: false, locked: true, t: t),
+          ],
+        ),
+        if (isClassic) ...[
+          const SizedBox(height: 14),
+          GestureDetector(
+            onTap: () => onToggleDoubleOut(!doubleOut),
+            child: Row(
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: 40,
+                  height: 22,
+                  decoration: BoxDecoration(
+                    color: doubleOut ? t.accent : t.surfaceBorder,
+                    borderRadius: BorderRadius.circular(11),
+                  ),
+                  child: AnimatedAlign(
+                    duration: const Duration(milliseconds: 200),
+                    alignment: doubleOut ? Alignment.centerRight : Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.all(3),
+                      child: Container(width: 16, height: 16, decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle)),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Text('Finir sur un double', style: TextStyle(color: t.textOnDark.withValues(alpha: 0.85), fontSize: 14)),
+                const SizedBox(width: 6),
+                Text('(double-out)', style: TextStyle(color: t.textDim, fontSize: 12)),
+              ],
+            ),
+          ),
+        ],
       ],
     );
   }

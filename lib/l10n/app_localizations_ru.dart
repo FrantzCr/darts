@@ -250,6 +250,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get colorPicker => 'Цвет';
 
   @override
+  String get initials => 'Инициалы';
+
+  @override
   String get hand => 'Рука';
 
   @override
@@ -259,7 +262,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get winBadge => 'П';
 
   @override
-  String get lossBadge => 'П';
+  String get lossBadge => 'Пр';
 
   @override
   String get dartsThrown => 'Брошено дротиков';
@@ -290,4 +293,104 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get currentStreakTooltip => 'Побед подряд';
+
+  @override
+  String get activeGamesTitle => 'Активные игры';
+
+  @override
+  String get notSignedInBroadcast => 'Не вошли — игры не будут транслироваться';
+
+  @override
+  String get joinByCode => 'Войти по коду';
+
+  @override
+  String get codeBtnLabel => 'Код';
+
+  @override
+  String codeNotFound(String code) {
+    return 'Код не найден: $code';
+  }
+
+  @override
+  String get join => 'Войти';
+
+  @override
+  String get connectionError => 'Ошибка подключения';
+
+  @override
+  String get startGameToAppear => 'Начни игру, чтобы она появилась здесь';
+
+  @override
+  String get signInToStream => 'Войдите и начните игру для трансляции';
+
+  @override
+  String byHost(String host) {
+    return 'Игра $host';
+  }
+
+  @override
+  String get rematchOrderTitle => 'Порядок игроков';
+
+  @override
+  String get dragToReorder => 'Перетащите для сортировки';
+
+  @override
+  String get gagesSection => 'Фанты';
+
+  @override
+  String get wheelEnabled => 'Колесо фантов';
+
+  @override
+  String get wheelMode => 'Режим';
+
+  @override
+  String get wheelModeFamily => 'Все возрасты';
+
+  @override
+  String get wheelModeAdult => '18+';
+
+  @override
+  String get manageGages => 'Управление фантами';
+
+  @override
+  String get addGage => 'Добавить фант';
+
+  @override
+  String get editGage => 'Изменить фант';
+
+  @override
+  String get gageHint => 'Опишите фант…';
+
+  @override
+  String get adultGage => 'Фант 18+';
+
+  @override
+  String get noGagesConfigured => 'Нет фантов — нажмите + чтобы добавить';
+
+  @override
+  String get spinInstruction => 'Проведите для вращения';
+
+  @override
+  String get yourForfeit => 'Твой фант!';
+
+  @override
+  String get continueGame => 'Вперёд!';
+
+  @override
+  String get accountSection => 'Аккаунт';
+
+  @override
+  String get languageSection => 'Язык';
+
+  @override
+  String get appearanceSection => 'Внешний вид';
+
+  @override
+  String get signInWithGoogle => 'Войти через Google';
+
+  @override
+  String get signOut => 'Выйти';
+
+  @override
+  String get defaultUsername => 'Пользователь';
 }

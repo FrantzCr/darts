@@ -250,6 +250,9 @@ class AppLocalizationsDa extends AppLocalizations {
   String get colorPicker => 'Farve';
 
   @override
+  String get initials => 'Initialer';
+
+  @override
   String get hand => 'Hånd';
 
   @override
@@ -290,4 +293,104 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get currentStreakTooltip => 'Sejre i træk';
+
+  @override
+  String get activeGamesTitle => 'Aktive spil';
+
+  @override
+  String get notSignedInBroadcast => 'Ikke logget ind — spil vises ikke live';
+
+  @override
+  String get joinByCode => 'Tilmeld med kode';
+
+  @override
+  String get codeBtnLabel => 'Kode';
+
+  @override
+  String codeNotFound(String code) {
+    return 'Kode ikke fundet: $code';
+  }
+
+  @override
+  String get join => 'Tilmeld';
+
+  @override
+  String get connectionError => 'Forbindelsesfejl';
+
+  @override
+  String get startGameToAppear => 'Start et spil for at det vises her';
+
+  @override
+  String get signInToStream => 'Log ind og start et spil for at streame det';
+
+  @override
+  String byHost(String host) {
+    return 'Af $host';
+  }
+
+  @override
+  String get rematchOrderTitle => 'Spillerrækkefølge';
+
+  @override
+  String get dragToReorder => 'Træk for at omplacere';
+
+  @override
+  String get gagesSection => 'Bøder';
+
+  @override
+  String get wheelEnabled => 'Hjul med bøder';
+
+  @override
+  String get wheelMode => 'Tilstand';
+
+  @override
+  String get wheelModeFamily => 'Alle aldre';
+
+  @override
+  String get wheelModeAdult => '18+';
+
+  @override
+  String get manageGages => 'Administrer bøder';
+
+  @override
+  String get addGage => 'Tilføj bøde';
+
+  @override
+  String get editGage => 'Rediger bøde';
+
+  @override
+  String get gageHint => 'Beskriv bøden…';
+
+  @override
+  String get adultGage => '18+ bøde';
+
+  @override
+  String get noGagesConfigured => 'Ingen bøder — tryk + for at tilføje';
+
+  @override
+  String get spinInstruction => 'Stryg for at dreje';
+
+  @override
+  String get yourForfeit => 'Din bøde!';
+
+  @override
+  String get continueGame => 'Afsted!';
+
+  @override
+  String get accountSection => 'Konto';
+
+  @override
+  String get languageSection => 'Sprog';
+
+  @override
+  String get appearanceSection => 'Udseende';
+
+  @override
+  String get signInWithGoogle => 'Log ind med Google';
+
+  @override
+  String get signOut => 'Log ud';
+
+  @override
+  String get defaultUsername => 'Bruger';
 }

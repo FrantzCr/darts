@@ -12,8 +12,6 @@ import '../../gages/providers/gage_provider.dart';
 import '../../history/providers/history_provider.dart';
 import '../../profile/providers/player_provider.dart';
 
-/// Set to true when a "Hors" miss triggers the spin wheel.
-final wheelTriggerProvider = StateProvider<bool>((ref) => false);
 
 class GameNotifier extends Notifier<ActiveGameState?> {
   String? _firestoreGameId;
@@ -21,7 +19,7 @@ class GameNotifier extends Notifier<ActiveGameState?> {
   @override
   ActiveGameState? build() => null;
 
-  void startGame(List<Player> players, {int startScore = 301, GameMode gameMode = GameMode.classic}) {
+  void startGame(List<Player> players, {int startScore = 301, GameMode gameMode = GameMode.classic, bool doubleOut = false}) {
     final initialScore = gameMode == GameMode.rtc ? 1 : startScore;
     final newState = ActiveGameState(
       players: players.map((p) => ActivePlayer(
@@ -32,6 +30,7 @@ class GameNotifier extends Notifier<ActiveGameState?> {
       startedAt: DateTime.now(),
       startScore: startScore,
       gameMode: gameMode,
+      doubleOut: doubleOut,
     );
     state = newState;
     _maybeCreateFirestoreGame(newState);
@@ -59,7 +58,7 @@ class GameNotifier extends Notifier<ActiveGameState?> {
 
   void recordHit(DartThrow dart) {
     final s = state;
-    if (s == null || s.turnComplete || s.status == GameStatus.win) return;
+    if (s == null || s.turnComplete || s.status == GameStatus.win || s.pendingGageSpin) return;
 
     if (s.isRtc) {
       _recordHitRtc(s, dart);
@@ -73,13 +72,6 @@ class GameNotifier extends Notifier<ActiveGameState?> {
       status: GameStatus.playing,
     );
     _pushToFirestore();
-
-    if (dart.id == 'miss') {
-      final gSettings = ref.read(gageProvider);
-      if (gSettings.enabled && gSettings.activeGages.isNotEmpty) {
-        ref.read(wheelTriggerProvider.notifier).state = true;
-      }
-    }
 
     Future.delayed(const Duration(milliseconds: 420), () {
       if (state?.lastHitId == dart.id) {
@@ -154,7 +146,13 @@ class GameNotifier extends Notifier<ActiveGameState?> {
     final cur = s.me;
     final scored = s.turnTotal;
     final newScore = cur.score - scored;
-    final bust = newScore < 0;
+
+    // Double-out check: finishing on 0 without a double/bull counts as bust
+    final lastDart = s.turn.isNotEmpty ? s.turn.last : null;
+    final doubleOutFail = newScore == 0 && s.doubleOut &&
+        (lastDart == null ||
+            (lastDart.multiplier != DartMultiplier.double && lastDart.id != 'bull-50'));
+    final bust = newScore < 0 || doubleOutFail;
 
     final doubleStats = _computeDoubleStats(s.turn, cur.score);
 
@@ -208,6 +206,21 @@ class GameNotifier extends Notifier<ActiveGameState?> {
       return;
     }
 
+    final hasMiss = s.turn.any((d) => d.id == 'miss');
+    final gSettings = ref.read(gageProvider);
+    if (hasMiss && gSettings.enabled && gSettings.activeGages.isNotEmpty) {
+      state = s.copyWith(
+        players: updatedPlayers,
+        completedTurns: newTurns,
+        doubleAttemptsByPlayer: newAttempts,
+        doubleHitsByPlayer: newHits,
+        turn: [],
+        pendingGageSpin: true,
+      );
+      _pushToFirestore();
+      return;
+    }
+
     _advanceTurn(
       s.copyWith(
         players: updatedPlayers,
@@ -218,6 +231,12 @@ class GameNotifier extends Notifier<ActiveGameState?> {
       scored: scored,
       newScore: newScore,
     );
+  }
+
+  void resumeAfterGage() {
+    final s = state;
+    if (s == null || !s.pendingGageSpin) return;
+    _advanceTurn(s.copyWith(pendingGageSpin: false), scored: 0, newScore: s.me.score);
   }
 
   void _validateRtc(ActiveGameState s) {
@@ -329,7 +348,6 @@ class GameNotifier extends Notifier<ActiveGameState?> {
   void reset() {
     _firestoreGameId = null;
     ref.read(liveGameCodeProvider.notifier).state = null;
-    ref.read(wheelTriggerProvider.notifier).state = false;
     state = null;
   }
 }

@@ -250,6 +250,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get colorPicker => 'Color';
 
   @override
+  String get initials => 'Iniciales';
+
+  @override
   String get hand => 'Mano';
 
   @override
@@ -290,4 +293,106 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get currentStreakTooltip => 'Victorias consecutivas';
+
+  @override
+  String get activeGamesTitle => 'Partidas en curso';
+
+  @override
+  String get notSignedInBroadcast =>
+      'No conectado — las partidas no se transmitirán';
+
+  @override
+  String get joinByCode => 'Unirse con código';
+
+  @override
+  String get codeBtnLabel => 'Código';
+
+  @override
+  String codeNotFound(String code) {
+    return 'Código no encontrado: $code';
+  }
+
+  @override
+  String get join => 'Unirse';
+
+  @override
+  String get connectionError => 'Error de conexión';
+
+  @override
+  String get startGameToAppear => 'Inicia una partida para que aparezca aquí';
+
+  @override
+  String get signInToStream =>
+      'Inicia sesión e inicia una partida para transmitirla';
+
+  @override
+  String byHost(String host) {
+    return 'Por $host';
+  }
+
+  @override
+  String get rematchOrderTitle => 'Orden de juego';
+
+  @override
+  String get dragToReorder => 'Arrastra para reordenar';
+
+  @override
+  String get gagesSection => 'Forfaits';
+
+  @override
+  String get wheelEnabled => 'Ruleta de forfaits';
+
+  @override
+  String get wheelMode => 'Modo';
+
+  @override
+  String get wheelModeFamily => 'Todos';
+
+  @override
+  String get wheelModeAdult => '18+';
+
+  @override
+  String get manageGages => 'Gestionar forfaits';
+
+  @override
+  String get addGage => 'Añadir forfait';
+
+  @override
+  String get editGage => 'Editar forfait';
+
+  @override
+  String get gageHint => 'Describe el forfait…';
+
+  @override
+  String get adultGage => 'Forfait 18+';
+
+  @override
+  String get noGagesConfigured => 'Sin forfaits — pulsa + para añadir';
+
+  @override
+  String get spinInstruction => 'Desliza para girar';
+
+  @override
+  String get yourForfeit => '¡Tu forfait!';
+
+  @override
+  String get continueGame => '¡Vamos!';
+
+  @override
+  String get accountSection => 'Cuenta';
+
+  @override
+  String get languageSection => 'Idioma';
+
+  @override
+  String get appearanceSection => 'Apariencia';
+
+  @override
+  String get signInWithGoogle => 'Iniciar sesión con Google';
+
+  @override
+  String get signOut => 'Cerrar sesión';
+
+  @override
+  String get defaultUsername => 'Usuario';
 }

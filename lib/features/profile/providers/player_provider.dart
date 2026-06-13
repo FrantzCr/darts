@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
@@ -45,7 +46,9 @@ class PlayerNotifier extends Notifier<List<Player>> {
         }
         state = box.values.toList();
       }
-    } catch (_) {}
+    } catch (e, st) {
+      debugPrint('[Player] _syncFromCloud error: $e\n$st');
+    }
   }
 
   Future<Player> createPlayer({
@@ -87,14 +90,19 @@ class PlayerNotifier extends Notifier<List<Player>> {
   void _pushToCloud(Player player) {
     final user = ref.read(authUserProvider).value;
     if (user != null) {
-      FirestoreUserService.savePlayer(user.uid, player).catchError((_) {});
+      FirestoreUserService.savePlayer(user.uid, player).catchError((e, st) {
+        debugPrint('[Player] _pushToCloud error: $e\n$st');
+      });
     }
   }
 
   void _deleteFromCloud(String playerId) {
     final user = ref.read(authUserProvider).value;
     if (user != null) {
-      FirestoreUserService.deletePlayer(user.uid, playerId).catchError((_) {});
+      FirestoreUserService.deletePlayer(user.uid, playerId)
+          .catchError((e, st) {
+        debugPrint('[Player] _deleteFromCloud error: $e\n$st');
+      });
     }
   }
 }

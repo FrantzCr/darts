@@ -9,6 +9,26 @@ import '../../../shared/widgets/pub_back_button.dart';
 import '../../../shared/widgets/pub_screen.dart';
 import '../providers/gage_provider.dart';
 
+const _kEmojiPresets = [
+  // Activités physiques
+  '💪', '🏋️', '🦵', '🧘', '🤸', '🏃', '🤼', '🤜', '🏊', '⚽', '🏀', '🎾', '🥊', '🚴', '🤾', '🏄',
+  // Musique & arts
+  '🎤', '🎵', '🎸', '🎭', '💃', '🕺', '🎬', '🪄', '🎺', '🥁', '🎹', '🎻', '🎨', '🎙️',
+  // Social & émotions
+  '😂', '😬', '🤪', '😳', '❤️', '🤫', '👉', '🗣️', '🤗', '😏', '🤔', '😎', '🥳', '😍', '🤡', '😇', '🥸', '🫡',
+  // Boissons
+  '🍺', '🥃', '🍹', '🍾', '🥂', '🧃', '☕', '🧋', '🍷', '🫗',
+  // Nourriture
+  '🍕', '🌮', '🍔', '🍦', '🎂', '🍫', '🌶️', '🍣',
+  // Animaux
+  '🐾', '🦁', '🐶', '🦊', '🐸', '🦄', '🐧', '🐺', '🦋', '🐉', '🦅', '🐔',
+  // Voyage & lieux
+  '🌍', '🏖️', '🏔️', '🗼', '🎡', '🎪',
+  // Divers fun
+  '🎯', '🎲', '🎉', '🏆', '⭐', '🔥', '📸', '📱', '❓', '🔄', '💬', '💌', '📜', '🌙', '🎊',
+  '💰', '🎁', '🔮', '⚡', '💡', '🌈', '👑', '💎', '🃏', '🎰', '🧨', '🪩',
+];
+
 class GageListScreen extends ConsumerWidget {
   const GageListScreen({super.key});
 
@@ -91,7 +111,9 @@ class GageListScreen extends ConsumerWidget {
     Gage? existing,
   ) {
     final controller = TextEditingController(text: existing?.text ?? '');
+    final emojiController = TextEditingController(text: existing?.emoji ?? '🎯');
     bool isAdult = existing?.isAdult ?? false;
+    String selectedEmoji = existing?.emoji ?? '🎯';
 
     showModalBottomSheet(
       context: context,
@@ -110,10 +132,10 @@ class GageListScreen extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Handle bar
                 Center(
                   child: Container(
-                    width: 40,
-                    height: 4,
+                    width: 40, height: 4,
                     decoration: BoxDecoration(color: t.surfaceBorder, borderRadius: BorderRadius.circular(2)),
                   ),
                 ),
@@ -123,9 +145,115 @@ class GageListScreen extends ConsumerWidget {
                   style: TextStyle(color: t.textOnDark, fontSize: 18, fontWeight: FontWeight.w700, fontFamily: t.displayFont),
                 ),
                 const SizedBox(height: 16),
+
+                // ── Emoji selector ──────────────────────────────────────
+                Text('Emoji', style: TextStyle(color: t.textDim, fontSize: 12, letterSpacing: 1)),
+                const SizedBox(height: 8),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Selected emoji preview
+                    Container(
+                      width: 52, height: 52,
+                      decoration: BoxDecoration(
+                        color: t.surface.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: t.accent, width: 2),
+                      ),
+                      child: Center(child: Text(selectedEmoji, style: const TextStyle(fontSize: 28))),
+                    ),
+                    const SizedBox(width: 10),
+                    // Free-type emoji input (opens system emoji keyboard on mobile)
+                    SizedBox(
+                      width: 52, height: 52,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: t.surface.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: t.surfaceBorder.withValues(alpha: 0.5)),
+                        ),
+                        child: Center(
+                          child: TextField(
+                            controller: emojiController,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 24),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.zero,
+                              hintText: '✏️',
+                              hintStyle: TextStyle(fontSize: 22, color: t.textDim),
+                              counterText: '',
+                            ),
+                            maxLength: 8,
+                            onChanged: (val) {
+                              final v = val.trim();
+                              if (v.isNotEmpty) {
+                                setSheet(() {
+                                  selectedEmoji = v;
+                                  emojiController.value = TextEditingValue(
+                                    text: v,
+                                    selection: TextSelection.collapsed(offset: v.length),
+                                  );
+                                });
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'Tape ici ou utilise\nle clavier emoji 😀',
+                        style: TextStyle(color: t.textDim, fontSize: 11, height: 1.4),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                // Scrollable presets grid
+                SizedBox(
+                  height: 136,
+                  child: SingleChildScrollView(
+                    child: Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: _kEmojiPresets.map((e) {
+                        final isSelected = e == selectedEmoji;
+                        return GestureDetector(
+                          onTap: () {
+                            emojiController.value = TextEditingValue(
+                              text: e,
+                              selection: TextSelection.collapsed(offset: e.length),
+                            );
+                            setSheet(() => selectedEmoji = e);
+                          },
+                          child: Container(
+                            width: 38, height: 38,
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? t.accent.withValues(alpha: 0.25)
+                                  : t.surface.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: isSelected ? t.accent : t.surfaceBorder.withValues(alpha: 0.4),
+                                width: isSelected ? 2 : 1,
+                              ),
+                            ),
+                            child: Center(child: Text(e, style: const TextStyle(fontSize: 20))),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // ── Description ─────────────────────────────────────────
                 TextField(
                   controller: controller,
-                  autofocus: true,
+                  autofocus: false,
                   style: TextStyle(color: t.textOnDark, fontSize: 16),
                   decoration: InputDecoration(
                     hintText: l10n.gageHint,
@@ -135,14 +263,15 @@ class GageListScreen extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
+
+                // ── Adult toggle ─────────────────────────────────────────
                 GestureDetector(
                   onTap: () => setSheet(() => isAdult = !isAdult),
                   child: Row(
                     children: [
                       AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
-                        width: 44,
-                        height: 26,
+                        width: 44, height: 26,
                         decoration: BoxDecoration(
                           color: isAdult ? Colors.red.withValues(alpha: 0.8) : t.surfaceBorder,
                           borderRadius: BorderRadius.circular(13),
@@ -162,6 +291,8 @@ class GageListScreen extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
+
+                // ── Save ────────────────────────────────────────────────
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton(
@@ -171,9 +302,9 @@ class GageListScreen extends ConsumerWidget {
                       if (text.isEmpty) return;
                       Navigator.of(ctx).pop();
                       if (existing == null) {
-                        notifier.addGage(text, isAdult);
+                        notifier.addGage(text, isAdult, emoji: selectedEmoji);
                       } else {
-                        notifier.updateGage(existing.copyWith(text: text, isAdult: isAdult));
+                        notifier.updateGage(existing.copyWith(text: text, isAdult: isAdult, emoji: selectedEmoji));
                       }
                     },
                     child: Text(
@@ -182,6 +313,21 @@ class GageListScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
+                if (existing != null) ...[
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    width: double.infinity,
+                    child: TextButton.icon(
+                      style: TextButton.styleFrom(foregroundColor: Colors.red, padding: const EdgeInsets.symmetric(vertical: 12)),
+                      icon: const Icon(Icons.delete_outline_rounded, size: 18),
+                      label: const Text('Supprimer ce gage', style: TextStyle(fontSize: 15)),
+                      onPressed: () {
+                        Navigator.of(ctx).pop();
+                        notifier.removeGage(existing.id);
+                      },
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -258,6 +404,8 @@ class _GageTile extends StatelessWidget {
           ),
           child: Row(
             children: [
+              Text(gage.emoji, style: const TextStyle(fontSize: 20)),
+              const SizedBox(width: 10),
               Expanded(
                 child: Text(gage.text, style: TextStyle(color: t.textOnDark, fontSize: 15)),
               ),

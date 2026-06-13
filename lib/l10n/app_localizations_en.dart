@@ -250,6 +250,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get colorPicker => 'Color';
 
   @override
+  String get initials => 'Initials';
+
+  @override
   String get hand => 'Hand';
 
   @override
@@ -290,4 +293,105 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get currentStreakTooltip => 'Consecutive wins';
+
+  @override
+  String get activeGamesTitle => 'Active games';
+
+  @override
+  String get notSignedInBroadcast =>
+      'Not signed in — games won\'t be broadcast';
+
+  @override
+  String get joinByCode => 'Join by code';
+
+  @override
+  String get codeBtnLabel => 'Code';
+
+  @override
+  String codeNotFound(String code) {
+    return 'Code not found: $code';
+  }
+
+  @override
+  String get join => 'Join';
+
+  @override
+  String get connectionError => 'Connection error';
+
+  @override
+  String get startGameToAppear => 'Start a game for it to appear here';
+
+  @override
+  String get signInToStream => 'Sign in and start a game to broadcast it';
+
+  @override
+  String byHost(String host) {
+    return 'By $host';
+  }
+
+  @override
+  String get rematchOrderTitle => 'Player order';
+
+  @override
+  String get dragToReorder => 'Drag to reorder';
+
+  @override
+  String get gagesSection => 'Forfeits';
+
+  @override
+  String get wheelEnabled => 'Forfeit wheel';
+
+  @override
+  String get wheelMode => 'Mode';
+
+  @override
+  String get wheelModeFamily => 'All ages';
+
+  @override
+  String get wheelModeAdult => '18+';
+
+  @override
+  String get manageGages => 'Manage forfeits';
+
+  @override
+  String get addGage => 'Add forfeit';
+
+  @override
+  String get editGage => 'Edit forfeit';
+
+  @override
+  String get gageHint => 'Describe the forfeit…';
+
+  @override
+  String get adultGage => '18+ forfeit';
+
+  @override
+  String get noGagesConfigured => 'No forfeits — tap + to add some';
+
+  @override
+  String get spinInstruction => 'Swipe to spin';
+
+  @override
+  String get yourForfeit => 'Your forfeit!';
+
+  @override
+  String get continueGame => 'Let\'s go!';
+
+  @override
+  String get accountSection => 'Account';
+
+  @override
+  String get languageSection => 'Language';
+
+  @override
+  String get appearanceSection => 'Appearance';
+
+  @override
+  String get signInWithGoogle => 'Sign in with Google';
+
+  @override
+  String get signOut => 'Sign out';
+
+  @override
+  String get defaultUsername => 'User';
 }

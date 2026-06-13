@@ -28,7 +28,7 @@ class GameScreen extends ConsumerWidget {
     final game = ref.watch(gameProvider);
     final t = ref.watch(activeThemeTokensProvider);
     final l10n = AppLocalizations.of(context);
-    final showWheel = ref.watch(wheelTriggerProvider);
+    final showWheel = game?.pendingGageSpin ?? false;
     final gageSettings = ref.watch(gageProvider);
 
     if (game == null) {
@@ -65,7 +65,7 @@ class GameScreen extends ConsumerWidget {
             Positioned.fill(
               child: SpinWheelOverlay(
                 gages: gageSettings.activeGages,
-                onDismiss: () => ref.read(wheelTriggerProvider.notifier).state = false,
+                onDismiss: () => ref.read(gameProvider.notifier).resumeAfterGage(),
               ),
             ),
         ],
@@ -258,6 +258,18 @@ class _TopBar extends ConsumerWidget {
               letterSpacing: 1.5,
             ),
           ),
+          if (game.doubleOut) ...[
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+              decoration: BoxDecoration(
+                color: t.accent.withValues(alpha: 0.25),
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: t.accent.withValues(alpha: 0.5)),
+              ),
+              child: Text('×2', style: TextStyle(color: t.accent, fontSize: 11, fontWeight: FontWeight.w800, fontFamily: t.monoFont)),
+            ),
+          ],
           const Spacer(),
           if (liveCode != null) ...[
             _LiveCodeBadge(code: liveCode, t: t),

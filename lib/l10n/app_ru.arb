@@ -93,7 +93,7 @@
   "hand": "Рука",
   "recentGames": "Последние игры",
   "winBadge": "П",
-  "lossBadge": "П",
+  "lossBadge": "Пр",
   "dartsThrown": "Брошено дротиков",
   "lastDart": "Последний дротик",
   "ppdTooltip": "Очков за дротик",
@@ -139,5 +139,11 @@
   "noGagesConfigured": "Нет фантов — нажмите + чтобы добавить",
   "spinInstruction": "Проведите для вращения",
   "yourForfeit": "Твой фант!",
-  "continueGame": "Вперёд!"
+  "continueGame": "Вперёд!",
+  "accountSection": "Аккаунт",
+  "languageSection": "Язык",
+  "appearanceSection": "Внешний вид",
+  "signInWithGoogle": "Войти через Google",
+  "signOut": "Выйти",
+  "defaultUsername": "Пользователь"
 }

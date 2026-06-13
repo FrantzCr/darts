@@ -578,6 +578,12 @@ abstract class AppLocalizations {
   /// **'Couleur'**
   String get colorPicker;
 
+  /// No description provided for @initials.
+  ///
+  /// In fr, this message translates to:
+  /// **'Initiales'**
+  String get initials;
+
   /// No description provided for @hand.
   ///
   /// In fr, this message translates to:
@@ -661,6 +667,198 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Victoires consécutives'**
   String get currentStreakTooltip;
+
+  /// No description provided for @activeGamesTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Parties en cours'**
+  String get activeGamesTitle;
+
+  /// No description provided for @notSignedInBroadcast.
+  ///
+  /// In fr, this message translates to:
+  /// **'Non connecté — les parties ne seront pas diffusées'**
+  String get notSignedInBroadcast;
+
+  /// No description provided for @joinByCode.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rejoindre avec un code'**
+  String get joinByCode;
+
+  /// No description provided for @codeBtnLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code'**
+  String get codeBtnLabel;
+
+  /// No description provided for @codeNotFound.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code introuvable : {code}'**
+  String codeNotFound(String code);
+
+  /// No description provided for @join.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rejoindre'**
+  String get join;
+
+  /// No description provided for @connectionError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Erreur de connexion'**
+  String get connectionError;
+
+  /// No description provided for @startGameToAppear.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lance une partie pour qu\'elle apparaisse ici'**
+  String get startGameToAppear;
+
+  /// No description provided for @signInToStream.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connectez-vous et lancez une partie pour la diffuser'**
+  String get signInToStream;
+
+  /// No description provided for @byHost.
+  ///
+  /// In fr, this message translates to:
+  /// **'Par {host}'**
+  String byHost(String host);
+
+  /// No description provided for @rematchOrderTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ordre de jeu'**
+  String get rematchOrderTitle;
+
+  /// No description provided for @dragToReorder.
+  ///
+  /// In fr, this message translates to:
+  /// **'Faites glisser pour réorganiser'**
+  String get dragToReorder;
+
+  /// No description provided for @gagesSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gages'**
+  String get gagesSection;
+
+  /// No description provided for @wheelEnabled.
+  ///
+  /// In fr, this message translates to:
+  /// **'Roue des gages'**
+  String get wheelEnabled;
+
+  /// No description provided for @wheelMode.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mode'**
+  String get wheelMode;
+
+  /// No description provided for @wheelModeFamily.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout public'**
+  String get wheelModeFamily;
+
+  /// No description provided for @wheelModeAdult.
+  ///
+  /// In fr, this message translates to:
+  /// **'18+'**
+  String get wheelModeAdult;
+
+  /// No description provided for @manageGages.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gérer les gages'**
+  String get manageGages;
+
+  /// No description provided for @addGage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un gage'**
+  String get addGage;
+
+  /// No description provided for @editGage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier le gage'**
+  String get editGage;
+
+  /// No description provided for @gageHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Décris le gage…'**
+  String get gageHint;
+
+  /// No description provided for @adultGage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gage 18+'**
+  String get adultGage;
+
+  /// No description provided for @noGagesConfigured.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun gage — appuyez sur + pour en ajouter'**
+  String get noGagesConfigured;
+
+  /// No description provided for @spinInstruction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Glisse pour faire tourner'**
+  String get spinInstruction;
+
+  /// No description provided for @yourForfeit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ton gage !'**
+  String get yourForfeit;
+
+  /// No description provided for @continueGame.
+  ///
+  /// In fr, this message translates to:
+  /// **'C\'est parti !'**
+  String get continueGame;
+
+  /// No description provided for @accountSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte'**
+  String get accountSection;
+
+  /// No description provided for @languageSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Langue'**
+  String get languageSection;
+
+  /// No description provided for @appearanceSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Apparence'**
+  String get appearanceSection;
+
+  /// No description provided for @signInWithGoogle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se connecter avec Google'**
+  String get signInWithGoogle;
+
+  /// No description provided for @signOut.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se déconnecter'**
+  String get signOut;
+
+  /// No description provided for @defaultUsername.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utilisateur'**
+  String get defaultUsername;
 }
 
 class _AppLocalizationsDelegate

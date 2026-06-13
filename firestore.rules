@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Active games: readable by any authenticated user, writable by the host
+    match /active_games/{gameId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null
+        && request.auth.uid == resource.data.hostUid;
+    }
+
+    // Completed games archive: readable by any authenticated user
+    match /games/{gameId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null;
+    }
+
+    // Per-user data: only the owner can read/write
+    match /users/{uid}/{document=**} {
+      allow read, write: if request.auth != null
+        && request.auth.uid == uid;
+    }
+
+    // Global shared gage list — any authenticated user can read and write
+    match /gages/{document} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}

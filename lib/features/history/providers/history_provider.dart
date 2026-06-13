@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uuid/uuid.dart';
@@ -39,7 +40,9 @@ class HistoryNotifier extends Notifier<List<GameSession>> {
         state = [...newSessions, ...state]
           ..sort((a, b) => b.playedAt.compareTo(a.playedAt));
       }
-    } catch (_) {}
+    } catch (e, st) {
+      debugPrint('[History] _mergeFromCloud error: $e\n$st');
+    }
   }
 
   Future<void> saveGame(ActiveGameState game) async {
@@ -73,7 +76,10 @@ class HistoryNotifier extends Notifier<List<GameSession>> {
     // Also save to Firestore if signed in
     final user = ref.read(authUserProvider).value;
     if (user != null) {
-      FirestoreUserService.saveGameSession(user.uid, session).catchError((_) {});
+      FirestoreUserService.saveGameSession(user.uid, session)
+          .catchError((e, st) {
+        debugPrint('[History] saveGameSession error: $e\n$st');
+      });
     }
   }
 

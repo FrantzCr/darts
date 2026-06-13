@@ -139,5 +139,11 @@
   "noGagesConfigured": "Ingen bøder — tryk + for at tilføje",
   "spinInstruction": "Stryg for at dreje",
   "yourForfeit": "Din bøde!",
-  "continueGame": "Afsted!"
+  "continueGame": "Afsted!",
+  "accountSection": "Konto",
+  "languageSection": "Sprog",
+  "appearanceSection": "Udseende",
+  "signInWithGoogle": "Log ind med Google",
+  "signOut": "Log ud",
+  "defaultUsername": "Bruger"
 }

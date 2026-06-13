@@ -59,7 +59,7 @@ class SettingsScreen extends ConsumerWidget {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
                 children: [
-                  _SectionLabel(label: 'Compte', t: t),
+                  _SectionLabel(label: l10n.accountSection, t: t),
                   const SizedBox(height: 8),
                   PubCard(
                     theme: t,
@@ -81,7 +81,7 @@ class SettingsScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 28),
-                  _SectionLabel(label: 'Langue', t: t),
+                  _SectionLabel(label: l10n.languageSection, t: t),
                   const SizedBox(height: 8),
                   PubCard(
                     theme: t,
@@ -108,7 +108,7 @@ class SettingsScreen extends ConsumerWidget {
                   const SizedBox(height: 8),
                   _GagesCard(t: t),
                   const SizedBox(height: 28),
-                  _SectionLabel(label: 'Apparence', t: t),
+                  _SectionLabel(label: l10n.appearanceSection, t: t),
                   const SizedBox(height: 8),
                   PubCard(
                     theme: t,
@@ -155,7 +155,7 @@ class _SignInRow extends StatelessWidget {
             Icon(Icons.login_rounded, color: t.accent, size: 22),
             const SizedBox(width: 14),
             Text(
-              'Se connecter avec Google',
+              AppLocalizations.of(context).signInWithGoogle,
               style: TextStyle(color: t.accent, fontSize: 15, fontWeight: FontWeight.w600),
             ),
             const Spacer(),
@@ -198,7 +198,7 @@ class _AccountRow extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      user.displayName ?? 'Utilisateur',
+                      user.displayName ?? AppLocalizations.of(context).defaultUsername,
                       style: TextStyle(color: t.text, fontSize: 15, fontWeight: FontWeight.w600),
                     ),
                     Text(
@@ -224,7 +224,7 @@ class _AccountRow extends ConsumerWidget {
                 Icon(Icons.logout_rounded, color: Colors.red.withValues(alpha: 0.8), size: 20),
                 const SizedBox(width: 14),
                 Text(
-                  'Se déconnecter',
+                  AppLocalizations.of(context).signOut,
                   style: TextStyle(color: Colors.red.withValues(alpha: 0.8), fontSize: 15),
                 ),
               ],

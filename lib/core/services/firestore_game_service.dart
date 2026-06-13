@@ -20,7 +20,7 @@ class FirestoreGameService {
       'hostName': hostName,
       'gameMode': game.gameMode.name,
       'startScore': game.startScore,
-      'createdAt': Timestamp.fromDate(DateTime.now()),
+      'createdAt': FieldValue.serverTimestamp(),
       'players': game.players.map((p) => {
         'id': p.player.id.toString(),
         'name': p.player.name,
@@ -45,7 +45,7 @@ class FirestoreGameService {
       batch.set(_db.collection(_gamesCol).doc(gameId), {
         'gameMode': game.gameMode.name,
         'startScore': game.startScore,
-        'createdAt': Timestamp.fromDate(DateTime.now()),
+        'createdAt': FieldValue.serverTimestamp(),
         'durationSeconds': DateTime.now().difference(game.startedAt).inSeconds,
         'players': game.players.map((p) => {
           'id': p.player.id.toString(),
